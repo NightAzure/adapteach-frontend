@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# AdapTeach Frontend (Next.js)
 
-## Getting Started
+Production-oriented mockup with API-ready integration for student and admin workflows.
 
-First, run the development server:
+## Stack
+- Next.js 16 (App Router, TypeScript)
+- Tailwind CSS
+- React Query (`@tanstack/react-query`)
+- Radix UI primitives
+- DnD Kit (Parsons)
+- Monaco Editor (tracing/mutation)
+- Recharts (analytics)
+- Axios (`mock`/`live` adapter switch)
+
+## Quick Start
 
 ```bash
+cd frontend
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API Modes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_API_MODE=mock` (default)
+- `NEXT_PUBLIC_API_MODE=live`
+- `NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Adapter selection is in `src/lib/api/client.ts`.
 
-## Learn More
+## Key Routes
 
-To learn more about Next.js, take a look at the following resources:
+### Public
+- `/`
+- `/login`
+- `/onboarding`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Student
+- `/student/dashboard`
+- `/student/session`
+- `/student/artifact/[artifactId]`
+- `/student/pretest`
+- `/student/posttest`
+- `/student/survey`
+- `/student/history`
+- `/student/profile`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Admin
+- `/admin`
+- `/admin/experiments`
+- `/admin/students`
+- `/admin/content`
+- `/admin/content/artifacts/[id]`
+- `/admin/analytics`
+- `/admin/runs`
+- `/admin/logs`
+- `/admin/settings`
 
-## Deploy on Vercel
+## Architecture Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Domain models: `src/types/models.ts`
+- API contracts/adapters: `src/lib/api/*`
+- Mock data: `src/lib/mocks/*`
+- Query hooks: `src/lib/hooks/queries.ts`
+- Telemetry hook: `src/lib/telemetry/useTelemetry.ts`
+- Student/admin shells: `src/components/layout/*`
+- Artifact components: `src/components/artifacts/*`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Research Alignment
+
+This UI is structured around:
+- adaptive vs static-linear parity,
+- artifact-driven intervention (Parsons, tracing, mutation, slicing, quiz),
+- instrumentation-ready flows for attempts, hints, duration, and progression.

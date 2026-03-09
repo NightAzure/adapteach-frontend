@@ -1,26 +1,189 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --surface-0: #f2efe9;
+  --surface-1: #fffdf8;
+  --surface-2: #f7f1e6;
+  --surface-3: #ece3d2;
+  --surface-sidebar: #f9f6f0;
+  --surface-header: color-mix(in srgb, #fffdf8 92%, white);
+  --line: #dacdb9;
+
+  --ink-900: #22201a;
+  --ink-800: #393329;
+  --ink-700: #52493c;
+  --ink-600: #746858;
+  --ink-500: #918371;
+
+  --brand-100: #ddf5ef;
+  --brand-500: #26a98f;
+  --brand-600: #1a8f79;
+  --brand-700: #12715f;
+  --brand-800: #0c5a4b;
+
+  --accent-500: #de7a39;
+  --accent-600: #b65d24;
+
+  /* Radius scale */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadow scale */
+  --shadow-card: 0 4px 16px rgba(20, 22, 15, 0.07), 0 1px 3px rgba(20, 22, 15, 0.05);
+  --shadow-popover: 0 8px 28px rgba(20, 22, 15, 0.13), 0 2px 6px rgba(20, 22, 15, 0.07);
+  --shadow-modal: 0 20px 48px rgba(20, 22, 15, 0.18), 0 4px 12px rgba(20, 22, 15, 0.1);
+  --shadow-brand: 0 8px 18px color-mix(in srgb, var(--brand-700) 40%, transparent);
+
+  /* Duration tokens */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --surface-0: #11120f;
+  --surface-1: #1b1c19;
+  --surface-2: #242621;
+  --surface-3: #2e302b;
+  --surface-sidebar: #181a16;
+  --surface-header: color-mix(in srgb, #1b1c19 92%, black);
+  --line: #43463d;
+
+  --ink-900: #f8f2e7;
+  --ink-800: #e8dece;
+  --ink-700: #d2c6b1;
+  --ink-600: #b5a894;
+  --ink-500: #928571;
+
+  --brand-100: #15362f;
+  --brand-500: #3cc5a8;
+  --brand-600: #2ea98f;
+  --brand-700: #218571;
+  --brand-800: #166e5c;
+
+  --accent-500: #f09152;
+  --accent-600: #df7837;
+
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.14);
+  --shadow-popover: 0 8px 28px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.18);
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  background:
+    radial-gradient(ellipse 60% 50% at 5% 0%, color-mix(in srgb, var(--brand-500) 12%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 95% 10%, color-mix(in srgb, var(--accent-500) 10%, transparent), transparent),
+    radial-gradient(ellipse 40% 35% at 50% 100%, color-mix(in srgb, var(--brand-600) 8%, transparent), transparent),
+    linear-gradient(160deg, color-mix(in srgb, var(--surface-0) 88%, #ffffff) 0%, var(--surface-0) 50%, var(--surface-0) 100%);
+  color: var(--ink-900);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Soft blob background overlay — replaces harsh grid */
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 28% 22% at 15% 25%, color-mix(in srgb, var(--brand-500) 7%, transparent), transparent),
+    radial-gradient(ellipse 22% 18% at 80% 60%, color-mix(in srgb, var(--accent-500) 6%, transparent), transparent),
+    radial-gradient(ellipse 35% 28% at 60% 5%, color-mix(in srgb, var(--brand-600) 5%, transparent), transparent);
+  z-index: -1;
+  opacity: 0.6;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand-500) 35%, white);
+  color: var(--ink-900);
+}
+
+a {
+  color: inherit;
+}
+
+/* ─── Animation utilities ─────────────────────────────────── */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pop {
+  0%   { opacity: 0; transform: scale(0.9); }
+  60%  { transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(5px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+
+.fade-up       { animation: fade-up var(--duration-slow) ease-out both; }
+.animate-fade-up { animation: fade-up var(--duration-slow) ease-out both; }
+.animate-slide-in { animation: slide-in var(--duration-base) ease-out both; }
+.animate-pop   { animation: pop var(--duration-slow) cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-shake { animation: shake 0.4s ease-in-out; }
+
+/* ─── Data table utilities ───────────────────────────────── */
+
+/* Hoverable table rows */
+.table-hover tbody tr {
+  transition: background-color var(--duration-fast) ease;
+}
+.table-hover tbody tr:hover {
+  background: color-mix(in srgb, var(--brand-100) 35%, var(--surface-1)) !important;
+}
+
+/* Striped table rows */
+.table-striped tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+}
+
+/* ─── Focus ring ──────────────────────────────────────────── */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--brand-600);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
