@@ -112,6 +112,7 @@ export default function LoginPage() {
               <label className="block space-y-1.5">
                 <span className="text-sm font-medium text-[var(--ink-800)]">Email</span>
                 <input
+                  id="email"
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
@@ -124,6 +125,7 @@ export default function LoginPage() {
               <label className="block space-y-1.5">
                 <span className="text-sm font-medium text-[var(--ink-800)]">Password</span>
                 <input
+                  id="password"
                   type="password"
                   autoComplete="current-password"
                   placeholder="••••••••"

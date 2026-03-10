@@ -54,8 +54,6 @@ function toWindowLabel(value?: boolean) {
 
 type ProtocolDraft = {
   phase: "auto" | "pretest" | "intervention" | "posttest" | "survey";
-  pretestWindow: "auto" | "open" | "closed";
-  posttestWindow: "auto" | "open" | "closed";
   pretestDue: string;
   posttestDue: string;
   note: string;
@@ -156,10 +154,6 @@ export default function AdminStudentsPage() {
     const override = protocolControl.data.override;
     return {
       phase: (override?.forceStudyPhase as ProtocolDraft["phase"] | undefined) ?? "auto",
-      pretestWindow:
-        override?.forcePretestWindowOpen === true ? "open" : override?.forcePretestWindowOpen === false ? "closed" : "auto",
-      posttestWindow:
-        override?.forcePosttestWindowOpen === true ? "open" : override?.forcePosttestWindowOpen === false ? "closed" : "auto",
       pretestDue: toDateTimeLocal(override?.pretestDueAt),
       posttestDue: toDateTimeLocal(override?.posttestDueAt),
       note: override?.note ?? "",
@@ -657,18 +651,10 @@ export default function AdminStudentsPage() {
                   <PageErrorState title="Failed to load protocol controls" backHref="/admin/students" />
                 ) : (
                   <>
-                    <div className="grid gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-0)] p-4 md:grid-cols-4">
+                    <div className="grid gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-0)] p-4 md:grid-cols-2">
                       <div>
                         <p className="text-xs uppercase tracking-[0.08em] text-[var(--ink-500)]">Computed phase</p>
                         <p className="mt-1 text-sm font-semibold capitalize">{protocolControl.data.studyPhase}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.08em] text-[var(--ink-500)]">Pre-test window</p>
-                        <p className="mt-1 text-sm font-semibold">{protocolControl.data.assessmentStatus.pretestWindowOpen ? "Open" : "Closed"}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.08em] text-[var(--ink-500)]">Post-test window</p>
-                        <p className="mt-1 text-sm font-semibold">{protocolControl.data.assessmentStatus.posttestWindowOpen ? "Open" : "Closed"}</p>
                       </div>
                       <div>
                         <p className="text-xs uppercase tracking-[0.08em] text-[var(--ink-500)]">Completed</p>
@@ -691,30 +677,6 @@ export default function AdminStudentsPage() {
                           <option value="intervention">intervention</option>
                           <option value="posttest">posttest</option>
                           <option value="survey">survey</option>
-                        </select>
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium">Pre-test Window Override</span>
-                        <select
-                          value={protocolDraft.pretestWindow}
-                          onChange={(e) => updateProtocolDraft((c) => ({ ...c, pretestWindow: e.target.value as ProtocolDraft["pretestWindow"] }))}
-                          className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface-0)] px-3 py-2"
-                        >
-                          <option value="auto">Auto</option>
-                          <option value="open">Force open</option>
-                          <option value="closed">Force closed</option>
-                        </select>
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium">Post-test Window Override</span>
-                        <select
-                          value={protocolDraft.posttestWindow}
-                          onChange={(e) => updateProtocolDraft((c) => ({ ...c, posttestWindow: e.target.value as ProtocolDraft["posttestWindow"] }))}
-                          className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface-0)] px-3 py-2"
-                        >
-                          <option value="auto">Auto</option>
-                          <option value="open">Force open</option>
-                          <option value="closed">Force closed</option>
                         </select>
                       </label>
                       <label className="space-y-1">
@@ -773,8 +735,6 @@ export default function AdminStudentsPage() {
                               userId: protocolUserId,
                               input: {
                                 forceStudyPhase: protocolDraft.phase === "auto" ? undefined : protocolDraft.phase,
-                                forcePretestWindowOpen: protocolDraft.pretestWindow === "auto" ? undefined : protocolDraft.pretestWindow === "open",
-                                forcePosttestWindowOpen: protocolDraft.posttestWindow === "auto" ? undefined : protocolDraft.posttestWindow === "open",
                                 pretestDueAt: protocolDraft.pretestDue ? new Date(protocolDraft.pretestDue).toISOString() : undefined,
                                 posttestDueAt: protocolDraft.posttestDue ? new Date(protocolDraft.posttestDue).toISOString() : undefined,
                                 note: protocolDraft.note.trim() || undefined,
