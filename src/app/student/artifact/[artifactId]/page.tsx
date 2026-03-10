@@ -24,7 +24,7 @@ import {
 import { useTelemetry } from "@/lib/telemetry/useTelemetry";
 import { nextStaticArtifactId } from "@/lib/utils/progression";
 import { toast } from "@/lib/toast";
-import type { Artifact } from "@/types/models";
+import type { Artifact, DashboardStudent } from "@/types/models";
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -520,7 +520,7 @@ export default function ArtifactDetailPage() {
               responseSummary: "Learner finished artifact workspace.",
             });
             // Refetch dashboard to get the newly assigned next artifact
-            const fresh = await queryClient.fetchQuery({
+            const fresh = await queryClient.fetchQuery<DashboardStudent>({
               queryKey: queryKeys.studentDashboard(user.id),
               staleTime: 0,
             });

@@ -1075,7 +1075,7 @@ export default function AdminStudentsPage() {
                   if (editForm.group !== "auto" && editForm.group !== editStudent.group) input.group = editForm.group;
                   if (editForm.password) input.password = editForm.password;
                   if (Object.keys(input).length === 0) {
-                    toast("No changes detected");
+                    toast.info("No changes detected");
                     return;
                   }
                   updateStudentMutation.mutate(
