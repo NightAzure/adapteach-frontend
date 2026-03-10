@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,8 +19,20 @@ export function FlashcardPanel({
   const [selected, setSelected] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
-  const options = artifact.options ?? [];
   const correct = artifact.answerOptionId ?? null;
+
+  // Shuffle options once per artifact using a seeded Fisher-Yates so the
+  // order is random but stable across re-renders for the same artifact.
+  const options = useMemo(() => {
+    const arr = [...(artifact.options ?? [])];
+    let seed = artifact.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const rand = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0x100000000; };
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [artifact.id, artifact.options]);
   const score = submitted && selected === correct ? 1 : 0;
 
   const optionState = (id: string) => {
