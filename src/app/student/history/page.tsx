@@ -101,7 +101,7 @@ export default function StudentHistoryPage() {
               onClick={() => setTypeFilter(typeFilter === t ? null : t)}
               className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.06em] transition-all ${
                 typeFilter === t
-                  ? "border-[var(--accent-500)] bg-orange-50 text-orange-800"
+                  ? "border-[var(--accent-500)] bg-orange-500/15 text-orange-700 dark:text-orange-300"
                   : "border-[var(--line)] bg-[var(--surface-1)] text-[var(--ink-600)] hover:bg-[var(--surface-2)]"
               }`}
             >
@@ -112,7 +112,7 @@ export default function StudentHistoryPage() {
             <button
               type="button"
               onClick={() => { setConceptFilter(null); setTypeFilter(null); }}
-              className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100"
+              className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-700 dark:text-rose-300 hover:bg-rose-500/20"
             >
               Clear filters
             </button>

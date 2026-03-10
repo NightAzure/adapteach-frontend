@@ -48,9 +48,9 @@ function getCoverageCount(
 }
 
 function difficultyBadgeTone(count: number): string {
-  if (count === 0) return "bg-rose-100 text-rose-700";
-  if (count <= 2) return "bg-amber-100 text-amber-700";
-  return "bg-emerald-100 text-emerald-700";
+  if (count === 0) return "bg-rose-500/15 text-rose-700 dark:text-rose-300";
+  if (count <= 2) return "bg-amber-500/15 text-amber-700 dark:text-amber-300";
+  return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300";
 }
 
 export default function AdminContentPage() {
@@ -205,9 +205,7 @@ export default function AdminContentPage() {
                             setTypeFilter(type);
                             setPage(1);
                           }}
-                          className={`inline-flex gap-1 rounded-lg px-2 py-1 transition hover:ring-2 hover:ring-[var(--brand-400)] ${
-                            isActive ? "ring-2 ring-[var(--brand-500)]" : ""
-                          }`}
+                          className={`inline-flex gap-1 rounded-lg px-2 py-1 transition hover:ring-2 hover:ring-[var(--brand-400)] ${isActive ? "ring-2 ring-[var(--brand-500)]" : ""}`}
                         >
                           {counts.map(({ d, n }) => (
                             <span
@@ -374,7 +372,7 @@ export default function AdminContentPage() {
                     onError: (err) => toast.error("Batch delete failed", { description: String(err) }),
                   });
                 }}
-                className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
+                className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-700 dark:text-rose-300 transition hover:bg-rose-500/20 disabled:opacity-50"
               >
                 {batchDeleteMutation.isPending ? "Deleting…" : "Delete Selected"}
               </button>
@@ -425,7 +423,7 @@ export default function AdminContentPage() {
                   return (
                     <Fragment key={artifact.id}>
                       <tr
-                        className={`border-t border-[var(--line)] ${isSelected ? "bg-[color-mix(in_srgb,var(--brand-400)_10%,white)]" : "bg-[color-mix(in_srgb,var(--surface-1)_92%,white)]"}`}
+                        className={`border-t border-[var(--line)] ${isSelected ? "bg-[var(--brand-500)]/10" : "bg-[var(--surface-1)]"}`}
                       >
                         <td className="px-4 py-3 w-10">
                           <input
@@ -530,12 +528,12 @@ export default function AdminContentPage() {
                                   </div>
                                   {showAnswer && artifact.solutionOrder && (
                                     <div>
-                                      <p className="mb-1 font-semibold uppercase tracking-wide text-emerald-600">Correct Order</p>
-                                      <div className="space-y-1 rounded-lg border border-emerald-200 bg-emerald-50 p-3 font-mono text-[11px]">
+                                      <p className="mb-1 font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">Correct Order</p>
+                                      <div className="space-y-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3 font-mono text-[11px]">
                                         {artifact.solutionOrder.map((lineIdx, pos) => (
                                           <div key={pos} className="flex gap-2">
-                                            <span className="w-5 shrink-0 font-semibold text-emerald-500">{pos + 1}.</span>
-                                            <span className="text-emerald-900">{artifact.lines?.[lineIdx]}</span>
+                                            <span className="w-5 shrink-0 font-semibold text-emerald-600 dark:text-emerald-400">{pos + 1}.</span>
+                                            <span className="text-[var(--ink-800)]">{artifact.lines?.[lineIdx]}</span>
                                           </div>
                                         ))}
                                       </div>
@@ -554,31 +552,31 @@ export default function AdminContentPage() {
                                   </div>
                                   {showAnswer && (
                                     <div>
-                                      <p className="mb-1 font-semibold uppercase tracking-wide text-emerald-600">Answer</p>
+                                      <p className="mb-1 font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">Answer</p>
                                       {artifact.type === "mutation" ? (
-                                        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 space-y-1">
-                                          <p className="text-emerald-700">Bug on line <span className="font-bold">{artifact.bugLineNo}</span></p>
+                                        <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3 space-y-1">
+                                          <p className="text-emerald-700 dark:text-emerald-300">Bug on line <span className="font-bold">{artifact.bugLineNo}</span></p>
                                           {artifact.bugLineFixExample && (
-                                            <pre className="font-mono text-[11px] text-emerald-900 whitespace-pre-wrap">{artifact.bugLineFixExample}</pre>
+                                            <pre className="font-mono text-[11px] text-[var(--ink-800)] whitespace-pre-wrap">{artifact.bugLineFixExample}</pre>
                                           )}
                                         </div>
                                       ) : (
                                         // tracing
-                                        <div className="rounded-lg border border-emerald-200 bg-emerald-50 overflow-hidden">
+                                        <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 overflow-hidden">
                                           <table className="w-full text-[11px]">
-                                            <thead className="bg-emerald-100">
+                                            <thead className="bg-emerald-500/20">
                                               <tr>
-                                                <th className="px-2 py-1.5 text-left font-semibold text-emerald-700 w-10">Step</th>
-                                                <th className="px-2 py-1.5 text-left font-semibold text-emerald-700">Expression</th>
-                                                <th className="px-2 py-1.5 text-left font-semibold text-emerald-700">Expected</th>
+                                                <th className="px-2 py-1.5 text-left font-semibold text-emerald-700 dark:text-emerald-400 w-10">Step</th>
+                                                <th className="px-2 py-1.5 text-left font-semibold text-emerald-700 dark:text-emerald-400">Expression</th>
+                                                <th className="px-2 py-1.5 text-left font-semibold text-emerald-700 dark:text-emerald-400">Expected</th>
                                               </tr>
                                             </thead>
                                             <tbody>
                                               {(artifact.traceTable ?? []).map((row) => (
-                                                <tr key={row.step} className="border-t border-emerald-200">
-                                                  <td className="px-2 py-1 font-mono text-emerald-600">{row.step}</td>
-                                                  <td className="px-2 py-1 font-mono text-emerald-900">{row.expression}</td>
-                                                  <td className="px-2 py-1 font-mono font-bold text-emerald-700">{row.expected}</td>
+                                                <tr key={row.step} className="border-t border-emerald-500/20">
+                                                  <td className="px-2 py-1 font-mono text-emerald-700 dark:text-emerald-400">{row.step}</td>
+                                                  <td className="px-2 py-1 font-mono text-[var(--ink-800)]">{row.expression}</td>
+                                                  <td className="px-2 py-1 font-mono font-bold text-emerald-700 dark:text-emerald-400">{row.expected}</td>
                                                 </tr>
                                               ))}
                                             </tbody>
@@ -605,10 +603,10 @@ export default function AdminContentPage() {
                                   </div>
                                   {showAnswer && artifact.answerOptionId && (
                                     <div>
-                                      <p className="mb-1 font-semibold uppercase tracking-wide text-emerald-600">Correct Answer</p>
-                                      <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-[11px]">
-                                        <span className="font-bold uppercase text-emerald-700">{artifact.answerOptionId}.</span>{" "}
-                                        <span className="text-emerald-900">
+                                      <p className="mb-1 font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">Correct Answer</p>
+                                      <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3 text-[11px]">
+                                        <span className="font-bold uppercase text-emerald-700 dark:text-emerald-400">{artifact.answerOptionId}.</span>{" "}
+                                        <span className="text-[var(--ink-800)]">
                                           {artifact.options.find((o) => o.id === artifact.answerOptionId)?.label ?? artifact.answerOptionId}
                                         </span>
                                       </div>
@@ -624,7 +622,7 @@ export default function AdminContentPage() {
                                   onClick={toggleAnswer}
                                   className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                                     showAnswer
-                                      ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25"
                                       : "bg-[var(--surface-2)] text-[var(--ink-600)] hover:bg-[var(--surface-1)]"
                                   }`}
                                 >

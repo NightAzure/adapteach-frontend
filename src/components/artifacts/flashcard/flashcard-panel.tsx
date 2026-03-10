@@ -45,8 +45,8 @@ export function FlashcardPanel({
   const stateClass: Record<string, string> = {
     idle: "border-[var(--line)] bg-[var(--surface-0)] text-[var(--ink-800)] hover:border-[var(--brand-400)] hover:bg-[var(--brand-50)]",
     selected: "border-[var(--brand-500)] bg-[var(--brand-50)] text-[var(--brand-900)]",
-    correct: "border-emerald-400 bg-emerald-50 text-emerald-900",
-    wrong: "border-rose-400 bg-rose-50 text-rose-900",
+    correct: "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+    wrong: "border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300",
   };
 
   const hasCode = Boolean(artifact.starterCode?.trim());

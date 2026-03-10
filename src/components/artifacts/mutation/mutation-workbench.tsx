@@ -76,9 +76,9 @@ export function MutationWorkbench({
                 key={`${lineNo}-${line}`}
                 className={`grid grid-cols-[44px_1fr] gap-2 px-3 py-1 font-mono text-[13px] leading-relaxed transition-colors duration-300 ${
                   isFixed
-                    ? "bg-emerald-50 text-emerald-800"
+                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                     : isBugLine
-                      ? "bg-amber-50 text-amber-900"
+                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-300"
                       : "text-[var(--ink-800)]"
                 }`}
               >
@@ -109,15 +109,15 @@ export function MutationWorkbench({
         style={{
           background: "var(--surface-1)",
           borderColor: showCorrect
-            ? "#6ee7b7"
+            ? "rgb(16 185 129 / 0.6)"
             : showIncorrect
-              ? "#fca5a5"
+              ? "rgb(239 68 68 / 0.6)"
               : "var(--line)",
         }}
       >
         <label htmlFor={patchInputId} className="flex items-center gap-2 text-sm font-medium text-[var(--ink-800)]">
           Fix line {bugLineNo}
-          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+          <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
             Bug line
           </span>
         </label>
@@ -130,9 +130,9 @@ export function MutationWorkbench({
           }}
           className={`w-full rounded-[var(--radius-md)] border px-3 py-2 font-mono text-[13px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] ${
             showCorrect
-              ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+              ? "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
               : showIncorrect
-                ? "border-rose-300 bg-rose-50 text-rose-800"
+                ? "border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300"
                 : "border-[var(--line)] bg-[var(--surface-0)] text-[var(--ink-900)]"
           }`}
           aria-label={`Patch for line ${bugLineNo}`}

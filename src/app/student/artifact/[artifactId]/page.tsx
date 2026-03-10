@@ -33,18 +33,18 @@ import type { Artifact, DashboardStudent } from "@/types/models";
 function ConceptExplanationPanel({ explanation }: { explanation: string }) {
   const [open, setOpen] = useState(true);
   return (
-    <Card className="border-blue-200 bg-blue-50 space-y-2">
+    <Card className="border-blue-500/30 bg-blue-500/10 space-y-2">
       <button
-        className="flex w-full items-center justify-between text-sm font-semibold text-blue-900"
+        className="flex w-full items-center justify-between text-sm font-semibold text-blue-700 dark:text-blue-300"
         onClick={() => setOpen(v => !v)}
       >
         <span className="flex items-center gap-2">
-          <BookOpen className="size-4 text-blue-600" /> What are we learning?
+          <BookOpen className="size-4 text-blue-600 dark:text-blue-400" /> What are we learning?
         </span>
         <ChevronDown className={`size-4 text-blue-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <p className="text-sm text-blue-800 leading-relaxed">{explanation}</p>
+        <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">{explanation}</p>
       )}
     </Card>
   );
@@ -52,21 +52,21 @@ function ConceptExplanationPanel({ explanation }: { explanation: string }) {
 
 function SolutionPanel({ artifact }: { artifact: Artifact }) {
   return (
-    <Card className="space-y-3 border-emerald-200 bg-emerald-50">
+    <Card className="space-y-3 border-emerald-500/40 bg-emerald-500/10">
       <div className="flex items-center gap-2">
-        <CheckCircle2 className="size-4 text-emerald-600" />
-        <h3 className="text-sm font-semibold text-emerald-900">Solution</h3>
+        <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+        <h3 className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Solution</h3>
       </div>
 
       {/* Correct answer per type */}
       {artifact.type === "parsons" && artifact.solutionOrder && artifact.solutionOrder.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide">Correct order</p>
+          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Correct order</p>
           {artifact.solutionOrder.map((lineIdx, pos) => (
-            <div key={pos} className="flex gap-2 rounded-lg border border-emerald-200 bg-white px-3 py-2">
+            <div key={pos} className="flex gap-2 rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2">
               <code className="flex-1 font-mono text-xs text-[var(--ink-800)] whitespace-pre">{artifact.lines?.[lineIdx]}</code>
               {artifact.lineAnnotations?.[lineIdx] && (
-                <span className="text-xs text-emerald-700 italic border-l border-emerald-200 pl-2 max-w-[200px]">{artifact.lineAnnotations[lineIdx]}</span>
+                <span className="text-xs text-emerald-700 dark:text-emerald-400 italic border-l border-emerald-500/30 pl-2 max-w-[200px]">{artifact.lineAnnotations[lineIdx]}</span>
               )}
             </div>
           ))}
@@ -75,9 +75,9 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
 
       {artifact.type === "mutation" && artifact.bugLineNo != null && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide">The bug was on line {artifact.bugLineNo}</p>
+          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">The bug was on line {artifact.bugLineNo}</p>
           {artifact.bugLineFixExample && (
-            <code className="block rounded-lg border border-emerald-200 bg-white px-3 py-2 font-mono text-xs text-[var(--ink-800)]">
+            <code className="block rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2 font-mono text-xs text-[var(--ink-800)]">
               {artifact.bugLineFixExample}
             </code>
           )}
@@ -86,11 +86,11 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
 
       {artifact.type === "tracing" && artifact.traceTable && artifact.traceTable.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide">Expected values</p>
-          <div className="overflow-x-auto rounded-lg border border-emerald-200 bg-white">
+          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Expected values</p>
+          <div className="overflow-x-auto rounded-lg border border-emerald-500/30 bg-[var(--surface-0)]">
             <table className="w-full text-xs">
-              <thead><tr className="border-b border-emerald-100"><th className="px-3 py-1.5 text-left font-medium text-emerald-700">Step</th><th className="px-3 py-1.5 text-left font-medium text-emerald-700">Expression</th><th className="px-3 py-1.5 text-left font-medium text-emerald-700">Value</th></tr></thead>
-              <tbody>{artifact.traceTable.map((row, i) => <tr key={i} className="border-b border-emerald-50 last:border-0"><td className="px-3 py-1.5 text-[var(--ink-600)]">{String(row.step)}</td><td className="px-3 py-1.5 font-mono text-[var(--ink-800)]">{String(row.expression)}</td><td className="px-3 py-1.5 font-mono font-medium text-emerald-700">{String(row.expected)}</td></tr>)}</tbody>
+              <thead><tr className="border-b border-emerald-500/20"><th className="px-3 py-1.5 text-left font-medium text-emerald-700 dark:text-emerald-400">Step</th><th className="px-3 py-1.5 text-left font-medium text-emerald-700 dark:text-emerald-400">Expression</th><th className="px-3 py-1.5 text-left font-medium text-emerald-700 dark:text-emerald-400">Value</th></tr></thead>
+              <tbody>{artifact.traceTable.map((row, i) => <tr key={i} className="border-b border-emerald-500/10 last:border-0"><td className="px-3 py-1.5 text-[var(--ink-600)]">{String(row.step)}</td><td className="px-3 py-1.5 font-mono text-[var(--ink-800)]">{String(row.expression)}</td><td className="px-3 py-1.5 font-mono font-medium text-emerald-700 dark:text-emerald-400">{String(row.expected)}</td></tr>)}</tbody>
             </table>
           </div>
         </div>
@@ -98,18 +98,18 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
 
       {artifact.type === "flashcard" && artifact.answerOptionId && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide">Correct answer</p>
+          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Correct answer</p>
           {artifact.options?.filter(o => o.id === artifact.answerOptionId).map(o => (
-            <div key={o.id} className="rounded-lg border border-emerald-300 bg-white px-3 py-2 text-sm font-medium text-emerald-800">{o.label}</div>
+            <div key={o.id} className="rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">{o.label}</div>
           ))}
         </div>
       )}
 
       {/* Explanation */}
       {artifact.solutionExplanation && (
-        <div className="border-t border-emerald-200 pt-2">
-          <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide mb-1">Why?</p>
-          <p className="text-sm text-emerald-800 leading-relaxed">{artifact.solutionExplanation}</p>
+        <div className="border-t border-emerald-500/30 pt-2">
+          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide mb-1">Why?</p>
+          <p className="text-sm text-emerald-700 dark:text-emerald-300 leading-relaxed">{artifact.solutionExplanation}</p>
         </div>
       )}
     </Card>
@@ -238,7 +238,7 @@ export default function ArtifactDetailPage() {
           <div className="flex flex-col items-end gap-2">
             {item.estimatedMinutes && (
               <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white">
-                <Clock3 className="size-3.5" /> {item.estimatedMinutes} min
+                <Clock3 className="size-3.5" /> ~{item.estimatedMinutes} min
               </div>
             )}
             {attempt > 0 && (

@@ -110,9 +110,9 @@ export function TracingPanel({
                           aria-label={`Answer for step ${row.step}: ${row.expression}`}
                           className={`w-full rounded-lg border px-2 py-1.5 text-xs font-mono outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] ${
                             answered && correct
-                              ? "border-emerald-400 bg-emerald-50 text-emerald-800"
+                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                               : answered
-                              ? "border-rose-300 bg-rose-50 text-rose-800"
+                              ? "border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300"
                               : "border-[var(--line)] bg-[var(--surface-0)]"
                           }`}
                           placeholder="value…"

@@ -18,23 +18,23 @@ function GeminiStatusRow({ health, activeModelOverride }: { health: GeminiHealth
   const displayModel = activeModelOverride ?? health.activeModel;
   if (!health.configured) {
     return (
-      <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+      <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300">
         <strong>Not configured</strong> — set{" "}
-        <code className="rounded bg-rose-100 px-1">ADAPTEACH_LLM_GEMINI_API_KEY</code> in backend{" "}
+        <code className="rounded bg-rose-500/15 px-1">ADAPTEACH_LLM_GEMINI_API_KEY</code> in backend{" "}
         <code>.env</code>.
       </div>
     );
   }
   if (!health.reachable) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
         <strong>Key set but unreachable.</strong>
         {health.error ? <span className="ml-1 font-mono text-xs">{health.error}</span> : null}
       </div>
     );
   }
   return (
-    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+    <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
       <strong>Connected</strong> — active model:{" "}
       <span className="font-mono text-xs">{displayModel}</span>
     </div>
@@ -302,7 +302,7 @@ export default function AdminSettingsPage() {
           </div>
         )}
         {geminiHealth.isError && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300">
             Request failed — backend may be down or auth is required.
           </div>
         )}

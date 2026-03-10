@@ -208,7 +208,7 @@ function SortableLine({
         isDragging
           ? "rotate-1 scale-[1.01] opacity-80 shadow-[var(--shadow-popover)]"
           : isCorrect
-            ? "border-emerald-300 bg-emerald-50"
+            ? "border-emerald-500 bg-emerald-500/10"
             : "border-[var(--line)] bg-[var(--surface-0)] hover:border-[var(--brand-500)] hover:shadow-[var(--shadow-card)]"
       }`}
       aria-label={`Code line ${index + 1} of ${total}`}

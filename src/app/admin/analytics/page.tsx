@@ -212,7 +212,7 @@ export default function AdminAnalyticsPage() {
               </thead>
               <tbody>
                 {rankedGainRows.map((row) => (
-                  <tr key={row.userId} className="border-t border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-1)_92%,white)]">
+                  <tr key={row.userId} className="border-t border-[var(--line)] bg-[var(--surface-1)]">
                     <td className="px-4 py-3 font-mono text-xs">{row.userId}</td>
                     <td className="px-4 py-3">{row.group ?? "N/A"}</td>
                     <td className="px-4 py-3">{formatPercent(row.pretestScore)}</td>
