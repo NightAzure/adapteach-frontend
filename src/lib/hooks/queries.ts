@@ -488,7 +488,7 @@ export function useAsyncJobsPage(
   query: {
     page: number;
     pageSize: number;
-    jobType?: "corpus_chunk" | "artifact_generate" | "all";
+    jobType?: "corpus_chunk" | "artifact_generate" | "embed_corpus" | "all";
     status?: "queued" | "running" | "succeeded" | "failed" | "all";
   },
   enabled = true,
