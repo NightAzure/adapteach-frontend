@@ -33,18 +33,18 @@ import type { Artifact, DashboardStudent } from "@/types/models";
 function ConceptExplanationPanel({ explanation }: { explanation: string }) {
   const [open, setOpen] = useState(true);
   return (
-    <Card className="border-blue-400/60 bg-blue-50 dark:border-blue-500/30 dark:bg-blue-500/10 space-y-2">
+    <Card className="learning-card space-y-2">
       <button
-        className="flex w-full items-center justify-between text-sm font-semibold text-blue-800 dark:text-blue-300"
+        className="learning-card-text flex w-full items-center justify-between text-sm font-semibold"
         onClick={() => setOpen(v => !v)}
       >
         <span className="flex items-center gap-2">
-          <BookOpen className="size-4 text-blue-700 dark:text-blue-400" /> What are we learning?
+          <BookOpen className="size-4" /> What are we learning?
         </span>
-        <ChevronDown className={`size-4 text-blue-600 dark:text-blue-500 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed">{explanation}</p>
+        <p className="learning-card-text text-sm leading-relaxed">{explanation}</p>
       )}
     </Card>
   );
@@ -52,21 +52,21 @@ function ConceptExplanationPanel({ explanation }: { explanation: string }) {
 
 function SolutionPanel({ artifact }: { artifact: Artifact }) {
   return (
-    <Card className="space-y-3 border-emerald-500/40 bg-emerald-500/10">
+    <Card className="solution-card space-y-3">
       <div className="flex items-center gap-2">
-        <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
-        <h3 className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Solution</h3>
+        <CheckCircle2 className="solution-card-muted size-4" />
+        <h3 className="solution-card-text text-sm font-semibold">Solution</h3>
       </div>
 
       {/* Correct answer per type */}
       {artifact.type === "parsons" && artifact.solutionOrder && artifact.solutionOrder.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Correct order</p>
+          <p className="solution-card-muted text-xs font-medium uppercase tracking-wide">Correct order</p>
           {artifact.solutionOrder.map((lineIdx, pos) => (
             <div key={pos} className="flex gap-2 rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2">
               <code className="flex-1 font-mono text-xs text-[var(--ink-800)] whitespace-pre">{artifact.lines?.[lineIdx]}</code>
               {artifact.lineAnnotations?.[lineIdx] && (
-                <span className="text-xs text-emerald-700 dark:text-emerald-400 italic border-l border-emerald-500/30 pl-2 max-w-[200px]">{artifact.lineAnnotations[lineIdx]}</span>
+                <span className="solution-card-muted text-xs italic border-l border-emerald-500/30 pl-2 max-w-[200px]">{artifact.lineAnnotations[lineIdx]}</span>
               )}
             </div>
           ))}
@@ -75,7 +75,7 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
 
       {artifact.type === "mutation" && artifact.bugLineNo != null && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">The bug was on line {artifact.bugLineNo}</p>
+          <p className="solution-card-muted text-xs font-medium uppercase tracking-wide">The bug was on line {artifact.bugLineNo}</p>
           {artifact.bugLineFixExample && (
             <code className="block rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2 font-mono text-xs text-[var(--ink-800)]">
               {artifact.bugLineFixExample}
@@ -86,11 +86,11 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
 
       {artifact.type === "tracing" && artifact.traceTable && artifact.traceTable.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Expected values</p>
+          <p className="solution-card-muted text-xs font-medium uppercase tracking-wide">Expected values</p>
           <div className="overflow-x-auto rounded-lg border border-emerald-500/30 bg-[var(--surface-0)]">
             <table className="w-full text-xs">
-              <thead><tr className="border-b border-emerald-500/20"><th className="px-3 py-1.5 text-left font-medium text-emerald-700 dark:text-emerald-400">Step</th><th className="px-3 py-1.5 text-left font-medium text-emerald-700 dark:text-emerald-400">Expression</th><th className="px-3 py-1.5 text-left font-medium text-emerald-700 dark:text-emerald-400">Value</th></tr></thead>
-              <tbody>{artifact.traceTable.map((row, i) => <tr key={i} className="border-b border-emerald-500/10 last:border-0"><td className="px-3 py-1.5 text-[var(--ink-600)]">{String(row.step)}</td><td className="px-3 py-1.5 font-mono text-[var(--ink-800)]">{String(row.expression)}</td><td className="px-3 py-1.5 font-mono font-medium text-emerald-700 dark:text-emerald-400">{String(row.expected)}</td></tr>)}</tbody>
+              <thead><tr className="border-b border-emerald-500/20"><th className="solution-card-muted px-3 py-1.5 text-left font-medium">Step</th><th className="solution-card-muted px-3 py-1.5 text-left font-medium">Expression</th><th className="solution-card-muted px-3 py-1.5 text-left font-medium">Value</th></tr></thead>
+              <tbody>{artifact.traceTable.map((row, i) => <tr key={i} className="border-b border-emerald-500/10 last:border-0"><td className="px-3 py-1.5 text-[var(--ink-600)]">{String(row.step)}</td><td className="px-3 py-1.5 font-mono text-[var(--ink-800)]">{String(row.expression)}</td><td className="solution-card-muted px-3 py-1.5 font-mono font-medium">{String(row.expected)}</td></tr>)}</tbody>
             </table>
           </div>
         </div>
@@ -98,9 +98,9 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
 
       {artifact.type === "flashcard" && artifact.answerOptionId && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Correct answer</p>
+          <p className="solution-card-muted text-xs font-medium uppercase tracking-wide">Correct answer</p>
           {artifact.options?.filter(o => o.id === artifact.answerOptionId).map(o => (
-            <div key={o.id} className="rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">{o.label}</div>
+            <div key={o.id} className="solution-card-text rounded-lg border border-emerald-500/30 bg-[var(--surface-0)] px-3 py-2 text-sm font-medium">{o.label}</div>
           ))}
         </div>
       )}
@@ -108,8 +108,8 @@ function SolutionPanel({ artifact }: { artifact: Artifact }) {
       {/* Explanation */}
       {artifact.solutionExplanation && (
         <div className="border-t border-emerald-500/30 pt-2">
-          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wide mb-1">Why?</p>
-          <p className="text-sm text-emerald-700 dark:text-emerald-300 leading-relaxed">{artifact.solutionExplanation}</p>
+          <p className="solution-card-muted text-xs font-medium uppercase tracking-wide mb-1">Why?</p>
+          <p className="solution-card-text text-sm leading-relaxed">{artifact.solutionExplanation}</p>
         </div>
       )}
     </Card>

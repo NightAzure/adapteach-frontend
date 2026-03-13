@@ -168,6 +168,50 @@ a {
   background: color-mix(in srgb, var(--surface-2) 60%, transparent);
 }
 
+/* ─── Greeting badge ─────────────────────────────────────── */
+
+.greeting-badge {
+  color: var(--ink-900) !important;
+}
+
+/* ─── Solution card ──────────────────────────────────────── */
+
+.solution-card {
+  background: color-mix(in srgb, #10b981 10%, var(--surface-1)) !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+
+.solution-card-text {
+  color: #065f46 !important;
+}
+
+.dark .solution-card-text {
+  color: #6ee7b7 !important;
+}
+
+.solution-card-muted {
+  color: #047857 !important;
+}
+
+.dark .solution-card-muted {
+  color: #34d399 !important;
+}
+
+/* ─── "What are we learning?" card ───────────────────────── */
+
+.learning-card {
+  background: color-mix(in srgb, #3b82f6 10%, var(--surface-1)) !important;
+  border-color: rgba(59, 130, 246, 0.45) !important;
+}
+
+.learning-card-text {
+  color: #1e40af !important;
+}
+
+.dark .learning-card-text {
+  color: #93c5fd !important;
+}
+
 /* ─── Focus ring ──────────────────────────────────────────── */
 
 a:focus-visible,
