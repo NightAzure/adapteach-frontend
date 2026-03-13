@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api/client";
 import { useSessionStore } from "@/lib/auth/session-store";
 
-/** Build a readable breadcrumb from a Next.js pathname */
 function useBreadcrumbs() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
@@ -96,8 +95,7 @@ export function TopBar() {
 
       {/* Right — actions */}
       <div className="flex items-center gap-1.5">
-        {/* Friendly greeting — hidden on very small screens */}
-        <span className="hidden rounded-full bg-[var(--brand-100)] px-3 py-1 text-xs font-semibold text-[var(--brand-800)] sm:inline-flex">
+        <span className="hidden rounded-full bg-[var(--brand-100)] px-3 py-1 text-xs !text-white font-semibold sm:inline-flex">
           Hi, {firstName} 👋
         </span>
 
@@ -111,7 +109,6 @@ export function TopBar() {
           {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
         </Button>
 
-        {/* Avatar chip */}
         <div
           className="flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium"
           style={{

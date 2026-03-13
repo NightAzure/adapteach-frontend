@@ -81,7 +81,7 @@ export function FlashcardPanel({
         </div>
 
         <div className="space-y-2" role="radiogroup" aria-label="Answer options">
-          {options.map((opt) => {
+          {options.map((opt, index) => {
             const state = optionState(opt.id);
             return (
               <button
@@ -94,7 +94,7 @@ export function FlashcardPanel({
                 className={`w-full rounded-xl border-2 px-4 py-3 text-left text-sm font-medium transition-all disabled:cursor-default ${stateClass[state]}`}
               >
                 <span className="mr-3 inline-block w-5 font-bold uppercase text-inherit opacity-60">
-                  {opt.id}.
+                  {String.fromCharCode(65 + index)}.
                 </span>
                 {opt.label}
               </button>
