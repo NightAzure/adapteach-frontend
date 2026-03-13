@@ -95,7 +95,7 @@ export function TopBar() {
 
       {/* Right — actions */}
       <div className="flex items-center gap-1.5">
-        <span className="hidden rounded-full bg-[var(--brand-100)] px-3 py-1 text-xs !text-white font-semibold sm:inline-flex">
+        <span className="hidden rounded-full bg-[var(--brand-100)] px-3 py-1 text-xs font-semibold text-[var(--brand-700)] dark:text-white sm:inline-flex">
           Hi, {firstName} 👋
         </span>
 

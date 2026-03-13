@@ -33,18 +33,18 @@ import type { Artifact, DashboardStudent } from "@/types/models";
 function ConceptExplanationPanel({ explanation }: { explanation: string }) {
   const [open, setOpen] = useState(true);
   return (
-    <Card className="border-blue-500/30 bg-blue-500/10 space-y-2">
+    <Card className="border-blue-400/60 bg-blue-50 dark:border-blue-500/30 dark:bg-blue-500/10 space-y-2">
       <button
-        className="flex w-full items-center justify-between text-sm font-semibold text-blue-700 dark:text-blue-300"
+        className="flex w-full items-center justify-between text-sm font-semibold text-blue-800 dark:text-blue-300"
         onClick={() => setOpen(v => !v)}
       >
         <span className="flex items-center gap-2">
-          <BookOpen className="size-4 text-blue-600 dark:text-blue-400" /> What are we learning?
+          <BookOpen className="size-4 text-blue-700 dark:text-blue-400" /> What are we learning?
         </span>
-        <ChevronDown className={`size-4 text-blue-500 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`size-4 text-blue-600 dark:text-blue-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">{explanation}</p>
+        <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed">{explanation}</p>
       )}
     </Card>
   );
