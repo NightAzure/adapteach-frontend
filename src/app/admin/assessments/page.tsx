@@ -59,6 +59,7 @@ export default function AdminAssessmentsPage() {
   const [submissionGroupFilter, setSubmissionGroupFilter] = useState<"all" | "adaptive" | "static">("all");
   const [isExportingCsv, setIsExportingCsv] = useState(false);
   const [isExportingBundle, setIsExportingBundle] = useState(false);
+  const [isExportingResearch, setIsExportingResearch] = useState(false);
   const [jsonImportPreview, setJsonImportPreview] = useState<{
     questions: AssessmentQuestion[];
     titleHint?: string;
@@ -241,6 +242,27 @@ export default function AdminAssessmentsPage() {
       toast.error("CSV export failed", { description: String(error) });
     } finally {
       setIsExportingCsv(false);
+    }
+  };
+
+  const exportResearchSummary = async () => {
+    try {
+      setIsExportingResearch(true);
+      const res = await apiClient.exportResearchSummary();
+      const blob = new Blob([res.data], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `research-summary-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Research summary ready", { description: "Per-student thesis analysis CSV downloaded." });
+    } catch (error) {
+      toast.error("Research export failed", { description: String(error) });
+    } finally {
+      setIsExportingResearch(false);
     }
   };
 
@@ -883,6 +905,9 @@ export default function AdminAssessmentsPage() {
             </Button>
             <Button type="button" variant="secondary" onClick={exportReportBundle} disabled={isExportingBundle}>
               <Download className="size-4" /> {isExportingBundle ? "Bundling..." : "Export Study Bundle"}
+            </Button>
+            <Button type="button" variant="secondary" onClick={exportResearchSummary} disabled={isExportingResearch}>
+              <Download className="size-4" /> {isExportingResearch ? "Exporting..." : "Export Research Summary"}
             </Button>
             <label className="text-sm font-medium">Group</label>
             <select

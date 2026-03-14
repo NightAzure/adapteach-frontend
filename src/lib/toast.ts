@@ -12,9 +12,9 @@ export const toast = {
       duration: opts?.duration ?? 4000,
       description: opts?.description,
       style: {
-        background: "color-mix(in srgb, var(--brand-100) 80%, white)",
-        border: "1px solid color-mix(in srgb, var(--brand-500) 35%, var(--line))",
-        color: "var(--brand-800)",
+        background: "#dcfce7",
+        border: "1.5px solid #86efac",
+        color: "#15803d",
       },
     });
   },
@@ -24,8 +24,8 @@ export const toast = {
       duration: opts?.duration ?? 5000,
       description: opts?.description,
       style: {
-        background: "color-mix(in srgb, #fee2e2 80%, white)",
-        border: "1px solid #fca5a5",
+        background: "#fee2e2",
+        border: "1.5px solid #fca5a5",
         color: "#991b1b",
       },
     });
@@ -36,9 +36,9 @@ export const toast = {
       duration: opts?.duration ?? 4000,
       description: opts?.description,
       style: {
-        background: "color-mix(in srgb, #fef9c3 80%, white)",
-        border: "1px solid #fde047",
-        color: "#713f12",
+        background: "#fef9c3",
+        border: "1.5px solid #fbbf24",
+        color: "#92400e",
       },
     });
   },
@@ -47,6 +47,11 @@ export const toast = {
     return sonnerToast.info(message, {
       duration: opts?.duration ?? 4000,
       description: opts?.description,
+      style: {
+        background: "#dbeafe",
+        border: "1.5px solid #93c5fd",
+        color: "#1e40af",
+      },
     });
   },
 };

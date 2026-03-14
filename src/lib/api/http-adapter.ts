@@ -197,6 +197,11 @@ export const httpAdapter: ApiAdapter = {
     return { data: res.data as string, source: "live" };
   },
 
+  async exportResearchSummary() {
+    const res = await api.get("/admin/research/export-summary", { responseType: "text" });
+    return { data: res.data as string, source: "live" as const };
+  },
+
   async exportAdminReportBundle(query) {
     const res = await api.get("/admin/reports/export-bundle", {
       params: query,

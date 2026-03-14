@@ -146,9 +146,7 @@ export default function CorpusPage() {
             <div
               key={row.id}
               className={`rounded-xl border px-4 py-3 transition ${
-                row.id === selectedDatasetId
-                  ? "border-[var(--brand-500)] bg-[color-mix(in_srgb,var(--brand-500)_8%,white)]"
-                  : "border-[var(--line)] bg-[var(--surface-0)]"
+                row.id === selectedDatasetId ? "corpus-card-selected" : "corpus-card-default"
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -228,7 +226,7 @@ export default function CorpusPage() {
                         onError: (err) => toast.error("Delete failed", { description: String(err) }),
                       });
                     }}
-                    className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
+                    className="btn-danger rounded-lg border px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50"
                   >
                     {deleteDatasetMutation.isPending && deleteDatasetMutation.variables === row.id ? "Deleting…" : "Delete"}
                   </button>

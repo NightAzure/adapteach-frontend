@@ -212,6 +212,32 @@ a {
   color: #93c5fd !important;
 }
 
+/* ─── Corpus dataset cards ───────────────────────────────── */
+
+.corpus-card-selected {
+  background: color-mix(in srgb, var(--brand-500) 10%, var(--surface-0)) !important;
+  border-color: var(--brand-500) !important;
+}
+
+.corpus-card-default {
+  background: var(--surface-0) !important;
+  border-color: var(--line) !important;
+}
+
+.btn-danger {
+  border-color: color-mix(in srgb, #f43f5e 40%, var(--line)) !important;
+  background: color-mix(in srgb, #f43f5e 10%, var(--surface-0)) !important;
+  color: #e11d48 !important;
+}
+
+.dark .btn-danger {
+  color: #fda4af !important;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, #f43f5e 18%, var(--surface-0)) !important;
+}
+
 /* ─── Focus ring ──────────────────────────────────────────── */
 
 a:focus-visible,
