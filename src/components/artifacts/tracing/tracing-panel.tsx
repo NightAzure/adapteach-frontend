@@ -13,7 +13,7 @@ function traceValuesEqual(student: string, expected: string): boolean {
   const ns = parseFloat(s);
   const ne = parseFloat(e);
   if (!isNaN(ns) && !isNaN(ne) && String(ns) !== "" && String(ne) !== "" && ns === ne) return true;
-  const unquote = (v: string) => (/^(['"])(.*)\1$/.test(v) ? v.slice(1, -1) : v);
+  const unquote = (v: string) => (/^(['"])(.*)\1$/.test(v) ? v.slice(1, -1).trim() : v);
   if (unquote(s) === unquote(e)) return true;
   return false;
 }
