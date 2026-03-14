@@ -78,7 +78,7 @@ export function MutationWorkbench({
                   isFixed
                     ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                     : isBugLine
-                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                      ? "bug-line-highlight"
                       : "text-[var(--ink-800)]"
                 }`}
               >
@@ -87,7 +87,7 @@ export function MutationWorkbench({
                     isFixed
                       ? "text-emerald-500"
                       : isBugLine
-                        ? "text-amber-500"
+                        ? "bug-line-number"
                         : "text-[var(--ink-400)]"
                   }`}
                 >
@@ -117,7 +117,7 @@ export function MutationWorkbench({
       >
         <label htmlFor={patchInputId} className="flex items-center gap-2 text-sm font-medium text-[var(--ink-800)]">
           Fix line {bugLineNo}
-          <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
+          <span className="bug-line-badge rounded-full px-2 py-0.5 text-xs font-semibold">
             Bug line
           </span>
         </label>

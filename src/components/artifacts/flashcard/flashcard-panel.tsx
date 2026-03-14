@@ -129,10 +129,12 @@ export function FlashcardPanel({
             type="button"
             disabled={!selected || submitted || locked}
             onClick={() => {
+              const isCorrect = selected === correct;
+              const resultScore = isCorrect ? 1 : 0;
               setSubmitted(true);
               onResult?.({
-                score,
-                responseSummary: `Selected option ${selected} — ${score === 1 ? "correct" : "incorrect"}.`,
+                score: resultScore,
+                responseSummary: `Selected option ${selected} — ${isCorrect ? "correct" : "incorrect"}.`,
                 responseData: { selectedOptionId: selected, correctOptionId: correct },
               });
             }}

@@ -238,6 +238,36 @@ a {
   background: color-mix(in srgb, #f43f5e 18%, var(--surface-0)) !important;
 }
 
+/* ─── Mutation bug line highlight ────────────────────────── */
+
+.bug-line-highlight {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.dark .bug-line-highlight {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fcd34d !important;
+}
+
+.bug-line-badge {
+  background: #fde68a !important;
+  color: #78350f !important;
+}
+
+.dark .bug-line-badge {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fcd34d !important;
+}
+
+.bug-line-number {
+  color: #d97706 !important;
+}
+
+.dark .bug-line-number {
+  color: #f59e0b !important;
+}
+
 /* ─── Focus ring ──────────────────────────────────────────── */
 
 a:focus-visible,
