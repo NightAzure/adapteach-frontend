@@ -371,7 +371,7 @@ export default function AdminSurveysPage() {
                             {val !== undefined ? (
                               q.questionType === "text"
                                 ? <span className="block max-w-[200px] truncate text-xs" title={val}>{val || <em className="text-[var(--ink-400)]">—</em>}</span>
-                                : <Badge variant="outline">{val}</Badge>
+                                : <Badge label={val} />
                             ) : (
                               <span className="text-[var(--ink-300)]">—</span>
                             )}
