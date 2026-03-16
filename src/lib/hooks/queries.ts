@@ -148,6 +148,20 @@ export function useSurvey() {
   });
 }
 
+export function useAdminSurveyQuestions() {
+  return useQuery({
+    queryKey: queryKeys.adminSurveyQuestions,
+    queryFn: () => apiClient.adminGetSurveyQuestions().then((res) => res.data),
+  });
+}
+
+export function useAdminSurveyResponses() {
+  return useQuery({
+    queryKey: queryKeys.adminSurveyResponses,
+    queryFn: () => apiClient.adminGetSurveyResponses().then((res) => res.data),
+  });
+}
+
 export function useAdminOverview() {
   return useQuery({
     queryKey: queryKeys.adminOverview,

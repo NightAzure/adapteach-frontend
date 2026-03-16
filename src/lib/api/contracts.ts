@@ -36,6 +36,8 @@
   CorpusUploadResponse,
   GeminiHealth,
   SurveyQuestion,
+  SurveyQuestionInput,
+  SurveyResponseRow,
   SurveySubmissionInput,
   SurveySubmissionResult,
   TelemetryEvent,
@@ -118,6 +120,10 @@ export interface ApiAdapter {
   getPosttest(): Promise<ApiResult<AssessmentDefinition>>;
   getSurvey(): Promise<ApiResult<SurveyQuestion[]>>;
   submitSurvey(input: SurveySubmissionInput): Promise<ApiResult<SurveySubmissionResult>>;
+  adminGetSurveyQuestions(): Promise<ApiResult<SurveyQuestion[]>>;
+  adminUpsertSurveyQuestions(questions: SurveyQuestionInput[]): Promise<ApiResult<SurveyQuestion[]>>;
+  adminGetSurveyResponses(): Promise<ApiResult<SurveyResponseRow[]>>;
+  adminExportSurveyResponsesCsv(): Promise<ApiResult<string>>;
 
   getAdminOverview(): Promise<ApiResult<AdminOverview>>;
   getOperationalAlertsSummary(query?: { windowHours?: number; limit?: number }): Promise<ApiResult<OperationalAlertsSummary>>;

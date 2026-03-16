@@ -17,6 +17,8 @@ export const queryKeys = {
   pretest: ["assessment", "pretest"] as const,
   posttest: ["assessment", "posttest"] as const,
   survey: ["survey", "usability"] as const,
+  adminSurveyQuestions: ["admin", "survey", "questions"] as const,
+  adminSurveyResponses: ["admin", "survey", "responses"] as const,
   adminOverview: ["admin", "overview"] as const,
   operationalAlertsSummary: (windowHours: number, limit: number) =>
     ["admin", "ops", "alerts", windowHours, limit] as const,

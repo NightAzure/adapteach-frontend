@@ -240,6 +240,26 @@ export const httpAdapter: ApiAdapter = {
     return { data: res.data, source: "live" };
   },
 
+  async adminGetSurveyQuestions() {
+    const res = await api.get("/surveys/admin/questions");
+    return { data: res.data, source: "live" };
+  },
+
+  async adminUpsertSurveyQuestions(questions) {
+    const res = await api.put("/surveys/admin/questions", { questions });
+    return { data: res.data, source: "live" };
+  },
+
+  async adminGetSurveyResponses() {
+    const res = await api.get("/surveys/admin/responses");
+    return { data: res.data, source: "live" };
+  },
+
+  async adminExportSurveyResponsesCsv() {
+    const res = await api.get("/surveys/admin/responses/export", { responseType: "text" });
+    return { data: res.data as string, source: "live" };
+  },
+
   async getAdminOverview() {
     const res = await api.get("/admin/overview");
     return { data: res.data, source: "live" };

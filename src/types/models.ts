@@ -278,13 +278,42 @@ export interface AssessmentUploadInput {
 export interface SurveyQuestion {
   id: string;
   label: string;
+  questionType: string;
+  section?: string | null;
   min: number;
   max: number;
+  minLabel?: string | null;
+  maxLabel?: string | null;
+}
+
+export interface SurveyQuestionInput {
+  id: string;
+  label: string;
+  questionType: string;
+  section?: string | null;
+  min: number;
+  max: number;
+  minLabel?: string | null;
+  maxLabel?: string | null;
+  displayOrder: number;
 }
 
 export interface SurveyResponseItem {
   questionId: string;
-  value: number;
+  value?: number | null;
+  textValue?: string | null;
+}
+
+export interface SurveyResponseRow {
+  userId: string;
+  userName: string;
+  questionId: string;
+  questionLabel: string;
+  section?: string | null;
+  questionType: string;
+  value?: number | null;
+  textValue?: string | null;
+  submittedAt: string;
 }
 
 export interface SurveySubmissionInput {

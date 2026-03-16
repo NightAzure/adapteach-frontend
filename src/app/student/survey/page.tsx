@@ -18,7 +18,7 @@ export default function SurveyPage() {
   const survey = useSurvey();
   const dashboard = useStudentDashboard(user?.id ?? "");
   const { track } = useTelemetry();
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, number | string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -65,7 +65,10 @@ export default function SurveyPage() {
     );
   }
 
-  const answeredCount = Object.keys(answers).length;
+  const answeredCount = Object.keys(answers).filter((id) => {
+    const v = answers[id];
+    return typeof v === "number" || (typeof v === "string" && v.trim() !== "");
+  }).length;
   const allAnswered = answeredCount === survey.data.length;
 
   async function handleSubmit() {
@@ -76,7 +79,11 @@ export default function SurveyPage() {
     setConfirmOpen(false);
     setSubmitting(true);
     try {
-      const responses = Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
+      const responses = Object.entries(answers).map(([questionId, value]) =>
+        typeof value === "string"
+          ? { questionId, textValue: value }
+          : { questionId, value: value as number }
+      );
       await apiClient.submitSurvey({ responses });
       track({
         event: "survey_submit",
@@ -126,61 +133,88 @@ export default function SurveyPage() {
             {answeredCount}/{survey.data.length} answered
           </span>
         </div>
-        <CardMeta>Rate each statement from low (1) to high agreement.</CardMeta>
+        <CardMeta>Answer each question. Likert scale: low = disagree, high = agree.</CardMeta>
       </Card>
 
       <div className="space-y-3">
         {survey.data.map((question, qIdx) => {
-          const isAnswered = question.id in answers;
-          return (
-            <Card
-              key={question.id}
-              className="space-y-3 transition-all"
-              style={{
-                borderColor: isAnswered
-                  ? "color-mix(in srgb, var(--brand-500) 30%, var(--line))"
-                  : "var(--line)",
-              }}
-            >
-              <div className="flex items-start gap-3">
-                <span
-                  className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
-                  style={{
-                    background: isAnswered ? "var(--brand-100)" : "var(--surface-3)",
-                    color: isAnswered ? "var(--brand-800)" : "var(--ink-500)",
-                  }}
-                >
-                  {isAnswered ? <CheckCircle2 className="size-3.5" /> : qIdx + 1}
-                </span>
-                <p className="text-sm font-medium text-[var(--ink-800)]">{question.label}</p>
-              </div>
+          const isText = question.questionType === "text";
+          const rawAnswer = answers[question.id];
+          const isAnswered = isText
+            ? typeof rawAnswer === "string" && rawAnswer.trim() !== ""
+            : rawAnswer !== undefined;
+          const currentSection = question.section;
+          const prevSection = qIdx > 0 ? survey.data[qIdx - 1].section : null;
+          const showSectionHeader = currentSection && currentSection !== prevSection;
 
-              {/* Likert scale buttons */}
-              <div className="flex flex-wrap items-center gap-2 pl-9">
-                <span className="text-[11px] text-[var(--ink-400)]">Disagree</span>
-                {Array.from({ length: question.max - question.min + 1 }).map((_, idx) => {
-                  const value = question.min + idx;
-                  const active = answers[question.id] === value;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setAnswers((prev) => ({ ...prev, [question.id]: value }))}
-                      aria-pressed={active}
-                      aria-label={`${question.label}: ${value}`}
-                      className={`grid size-10 place-items-center rounded-full border text-sm font-bold transition-all duration-150 ${
-                        active
-                          ? "scale-110 border-[var(--brand-600)] bg-[var(--brand-600)] text-white shadow-[var(--shadow-brand)]"
-                          : "border-[var(--line)] bg-[var(--surface-1)] text-[var(--ink-700)] hover:scale-105 hover:border-[var(--brand-500)] hover:bg-[var(--brand-100)]"
-                      }`}
-                    >
-                      {value}
-                    </button>
-                  );
-                })}
-                <span className="text-[11px] text-[var(--ink-400)]">Agree</span>
-              </div>
-            </Card>
+          return (
+            <div key={question.id}>
+              {showSectionHeader && (
+                <div className="flex items-center gap-3 pb-1 pt-2">
+                  <span className="text-xs font-bold uppercase tracking-[0.15em] text-[var(--brand-600)]">
+                    {currentSection}
+                  </span>
+                  <div className="h-px flex-1" style={{ background: "var(--line)" }} />
+                </div>
+              )}
+              <Card
+                className="space-y-3 transition-all"
+                style={{
+                  borderColor: isAnswered
+                    ? "color-mix(in srgb, var(--brand-500) 30%, var(--line))"
+                    : "var(--line)",
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                    style={{
+                      background: isAnswered ? "var(--brand-100)" : "var(--surface-3)",
+                      color: isAnswered ? "var(--brand-800)" : "var(--ink-500)",
+                    }}
+                  >
+                    {isAnswered ? <CheckCircle2 className="size-3.5" /> : qIdx + 1}
+                  </span>
+                  <p className="text-sm font-medium text-[var(--ink-800)]">{question.label}</p>
+                </div>
+
+                {isText ? (
+                  <textarea
+                    rows={3}
+                    placeholder="Type your answer here…"
+                    value={typeof rawAnswer === "string" ? rawAnswer : ""}
+                    onChange={(e) => setAnswers((prev) => ({ ...prev, [question.id]: e.target.value }))}
+                    className="w-full resize-none rounded-xl border px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)]"
+                    style={{ background: "var(--surface-0)", borderColor: "var(--line)", color: "var(--ink-900)" }}
+                  />
+                ) : (
+                  <div className="flex flex-wrap items-center gap-2 pl-9">
+                    <span className="text-[11px] text-[var(--ink-400)]">{question.minLabel ?? "Disagree"}</span>
+                    {Array.from({ length: question.max - question.min + 1 }).map((_, idx) => {
+                      const value = question.min + idx;
+                      const active = answers[question.id] === value;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => setAnswers((prev) => ({ ...prev, [question.id]: value }))}
+                          aria-pressed={active}
+                          aria-label={`${question.label}: ${value}`}
+                          className={`grid size-10 place-items-center rounded-full border text-sm font-bold transition-all duration-150 ${
+                            active
+                              ? "scale-110 border-[var(--brand-600)] bg-[var(--brand-600)] text-white shadow-[var(--shadow-brand)]"
+                              : "border-[var(--line)] bg-[var(--surface-1)] text-[var(--ink-700)] hover:scale-105 hover:border-[var(--brand-500)] hover:bg-[var(--brand-100)]"
+                          }`}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                    <span className="text-[11px] text-[var(--ink-400)]">{question.maxLabel ?? "Agree"}</span>
+                  </div>
+                )}
+              </Card>
+            </div>
           );
         })}
       </div>
