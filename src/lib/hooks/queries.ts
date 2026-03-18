@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
 import { queryKeys } from "@/lib/api/query-keys";
 import type {
@@ -64,6 +64,7 @@ export function useArtifactsPage(query: ArtifactListQuery, enabled = true) {
     queryKey: queryKeys.artifactsPage(query),
     queryFn: () => apiClient.getArtifactsPage(query).then((res) => res.data),
     enabled,
+    placeholderData: keepPreviousData,
   });
 }
 

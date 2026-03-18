@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ArrowRight, ChevronDown, ChevronRight, Copy, LayoutGrid, List, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowRight, ChevronDown, ChevronRight, Copy, ExternalLink, LayoutGrid, List, Trash2, X } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,10 @@ export default function AdminContentPage() {
   const [sort, setSort] = useState("title:asc");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+
+  // Duplicate review drawer
+  const [showDuplicates, setShowDuplicates] = useState(false);
+  const [dupGroupIdx, setDupGroupIdx] = useState(0);
 
   // Multi-select state (table view only)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -232,53 +236,152 @@ export default function AdminContentPage() {
         )}
       </Card>
 
-      {/* Duplicate Detection Panel */}
+      {/* Duplicate Detection — compact banner */}
       {(duplicatesQuery.data ?? []).length > 0 && (
-        <Card className="space-y-3 border-amber-500/40" style={{ background: "color-mix(in srgb, var(--surface-1) 85%, #f59e0b10)" }}>
-          <div className="flex items-center gap-3">
-            <Copy className="size-4 text-amber-500 shrink-0" />
-            <div>
-              <CardTitle>Duplicate Artifacts Detected</CardTitle>
-              <CardMeta>{duplicatesQuery.data!.length} group(s) with identical titles in the same concept / type / difficulty slot.</CardMeta>
-            </div>
-          </div>
-          <div className="space-y-2">
-            {(duplicatesQuery.data as ArtifactDuplicateGroup[]).map((group, gi) => (
-              <div key={gi} className="rounded-xl border border-[var(--line)] bg-[var(--surface-0)] p-3 space-y-2">
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <Badge label={group.concept} tone="admin" />
-                  <Badge label={group.type} tone="static" />
-                  <Badge label={group.difficulty} tone={group.difficulty as Difficulty} />
-                  <span className="font-semibold text-[var(--ink-800)] truncate max-w-xs">{group.title}</span>
-                  <span className="text-[var(--ink-400)]">({group.artifacts.length} copies)</span>
+        <div
+          className="flex items-center gap-3 rounded-xl border px-4 py-2.5"
+          style={{ borderColor: "color-mix(in srgb, #f59e0b 40%, var(--line))", background: "color-mix(in srgb, #f59e0b 8%, var(--surface-1))" }}
+        >
+          <Copy className="size-4 text-amber-500 shrink-0" />
+          <p className="flex-1 text-sm font-medium text-[var(--ink-800)]">
+            <span className="font-bold text-amber-700">{duplicatesQuery.data!.length}</span> duplicate group{duplicatesQuery.data!.length !== 1 ? "s" : ""} detected
+          </p>
+          <button
+            type="button"
+            onClick={() => { setDupGroupIdx(0); setShowDuplicates(true); }}
+            className="rounded-lg border border-amber-400/50 bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-800 transition hover:bg-amber-500/25"
+          >
+            Review
+          </button>
+        </div>
+      )}
+
+      {/* Duplicate review drawer overlay */}
+      {showDuplicates && (duplicatesQuery.data ?? []).length > 0 && (() => {
+        const groups = duplicatesQuery.data as ArtifactDuplicateGroup[];
+        const idx = Math.min(dupGroupIdx, groups.length - 1);
+        const group = groups[idx];
+        return (
+          <div className="fixed inset-0 z-50 flex items-end justify-end" style={{ pointerEvents: "none" }}>
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+              style={{ pointerEvents: "auto" }}
+              onClick={() => setShowDuplicates(false)}
+            />
+            {/* Drawer */}
+            <div
+              className="relative flex h-full w-full max-w-md flex-col border-l shadow-2xl"
+              style={{ pointerEvents: "auto", background: "var(--surface-0)", borderColor: "var(--line)" }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between gap-3 border-b px-5 py-4" style={{ borderColor: "var(--line)" }}>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-600">Duplicate Review</p>
+                  <h2 className="text-base font-semibold text-[var(--ink-900)]">
+                    Group {idx + 1} of {groups.length}
+                  </h2>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {group.artifacts.map((entry) => (
-                    <div key={entry.id} className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-1)] px-2 py-1 text-xs">
-                      <span className="font-mono text-[var(--ink-500)]">{entry.id}</span>
-                      <button
-                        type="button"
-                        title="Delete this artifact"
-                        disabled={deleteArtifactMutation.isPending && deleteArtifactMutation.variables === entry.id}
-                        onClick={() => {
-                          if (!window.confirm(`Delete duplicate artifact "${entry.title}" (${entry.id})?\nThis cannot be undone.`)) return;
-                          deleteArtifactMutation.mutate(entry.id, {
-                            onSuccess: () => toast.success("Duplicate deleted", { description: entry.id }),
-                            onError: (err) => toast.error("Delete failed", { description: String(err) }),
-                          });
-                        }}
-                        className="text-rose-600 hover:text-rose-800 disabled:opacity-40 transition"
-                      >
-                        <Trash2 className="size-3" />
-                      </button>
+                <button type="button" onClick={() => setShowDuplicates(false)} className="rounded-lg p-1.5 text-[var(--ink-500)] hover:bg-[var(--surface-2)] transition">
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              {/* Group nav */}
+              <div className="flex items-center gap-2 border-b px-5 py-2.5 overflow-x-auto" style={{ borderColor: "var(--line)" }}>
+                {groups.map((g, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setDupGroupIdx(i)}
+                    className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs font-semibold transition ${
+                      i === idx
+                        ? "border-amber-400/60 bg-amber-500/20 text-amber-800"
+                        : "border-[var(--line)] bg-[var(--surface-1)] text-[var(--ink-600)] hover:bg-[var(--surface-2)]"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              {/* Group detail */}
+              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+                {/* Meta */}
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge label={group.concept} tone="admin" />
+                    <Badge label={group.type} tone="static" />
+                    <Badge label={group.difficulty} tone={group.difficulty as Difficulty} />
+                  </div>
+                  <p className="text-sm font-semibold text-[var(--ink-900)]">{group.title}</p>
+                  <p className="text-xs text-[var(--ink-500)]">{group.artifacts.length} copies with identical title in this slot</p>
+                </div>
+
+                {/* Artifact list */}
+                <div className="space-y-2">
+                  {group.artifacts.map((entry, ei) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center gap-3 rounded-xl border p-3"
+                      style={{ borderColor: "var(--line)", background: "var(--surface-1)" }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-[var(--ink-800)] truncate">{entry.title}</p>
+                        <p className="mt-0.5 font-mono text-[10px] text-[var(--ink-400)]">{entry.id}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Link
+                          href={`/admin/content/artifacts/${entry.id}`}
+                          target="_blank"
+                          className="rounded-lg border border-[var(--line)] p-1.5 text-[var(--ink-500)] hover:text-[var(--ink-900)] hover:bg-[var(--surface-2)] transition"
+                          title="Open artifact"
+                        >
+                          <ExternalLink className="size-3.5" />
+                        </Link>
+                        <button
+                          type="button"
+                          title={ei === 0 ? "Keep first copy — delete the others instead" : "Delete this duplicate"}
+                          disabled={deleteArtifactMutation.isPending && deleteArtifactMutation.variables === entry.id}
+                          onClick={() => {
+                            if (!window.confirm(`Delete "${entry.title}" (${entry.id})?\nThis cannot be undone.`)) return;
+                            deleteArtifactMutation.mutate(entry.id, {
+                              onSuccess: () => {
+                                toast.success("Duplicate deleted", { description: entry.id });
+                                // if last artifact in group removed, advance
+                                if (group.artifacts.length <= 2 && idx < groups.length - 1) setDupGroupIdx(idx + 1);
+                              },
+                              onError: (err) => toast.error("Delete failed", { description: String(err) }),
+                            });
+                          }}
+                          className={`rounded-lg border p-1.5 transition disabled:opacity-40 ${
+                            ei === 0
+                              ? "border-[var(--line)] text-[var(--ink-400)] hover:border-rose-400 hover:text-rose-600"
+                              : "border-rose-400/40 bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
+                          }`}
+                        >
+                          <Trash2 className="size-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
-            ))}
+
+              {/* Footer nav */}
+              <div className="flex items-center justify-between gap-3 border-t px-5 py-3" style={{ borderColor: "var(--line)" }}>
+                <Button variant="secondary" size="sm" disabled={idx === 0} onClick={() => setDupGroupIdx((p) => Math.max(0, p - 1))}>
+                  ← Prev
+                </Button>
+                <span className="text-xs text-[var(--ink-500)]">{idx + 1} / {groups.length}</span>
+                <Button variant="secondary" size="sm" disabled={idx >= groups.length - 1} onClick={() => setDupGroupIdx((p) => Math.min(groups.length - 1, p + 1))}>
+                  Next →
+                </Button>
+              </div>
+            </div>
           </div>
-        </Card>
-      )}
+        );
+      })()}
 
       <Card className="space-y-4">
         <div className="grid gap-3 lg:grid-cols-[1.4fr_repeat(5,minmax(0,1fr))]">
