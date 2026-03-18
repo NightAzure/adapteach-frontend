@@ -322,7 +322,7 @@ export default function AdminContentPage() {
 
                 {/* Artifact list */}
                 <div className="space-y-2">
-                  {group.artifacts.map((entry, ei) => {
+                  {group.artifacts.map((entry) => {
                     const isSuppressing = suppressMutation.isPending && suppressMutation.variables?.artifactId === entry.id;
                     return (
                       <div
@@ -346,7 +346,7 @@ export default function AdminContentPage() {
                             </Link>
                             <button
                               type="button"
-                              title={ei === 0 ? "Keep first copy — delete the others instead" : "Delete this duplicate"}
+                              title="Delete this artifact"
                               disabled={deleteArtifactMutation.isPending && deleteArtifactMutation.variables === entry.id}
                               onClick={() => {
                                 if (!window.confirm(`Delete "${entry.title}" (${entry.id})?\nThis cannot be undone.`)) return;
@@ -358,11 +358,7 @@ export default function AdminContentPage() {
                                   onError: (err) => toast.error("Delete failed", { description: String(err) }),
                                 });
                               }}
-                              className={`rounded-lg border p-1.5 transition disabled:opacity-40 ${
-                                ei === 0
-                                  ? "border-[var(--line)] text-[var(--ink-400)] hover:border-rose-400 hover:text-rose-600"
-                                  : "border-rose-400/40 bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
-                              }`}
+                              className="rounded-lg border border-rose-400/40 bg-rose-500/10 p-1.5 text-rose-600 transition hover:bg-rose-500/20 disabled:opacity-40"
                             >
                               <Trash2 className="size-3.5" />
                             </button>
