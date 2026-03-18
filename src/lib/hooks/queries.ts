@@ -710,6 +710,17 @@ export function useArtifactDuplicates(enabled = true) {
   });
 }
 
+export function useSuppressDuplicateMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ artifactId, suppress }: { artifactId: string; suppress: boolean }) =>
+      apiClient.setArtifactSuppressDuplicate(artifactId, suppress),
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.artifactDuplicates });
+    },
+  });
+}
+
 export function useBatchDeleteArtifactsMutation() {
   const qc = useQueryClient();
   return useMutation({

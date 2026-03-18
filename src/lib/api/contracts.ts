@@ -221,6 +221,7 @@ export interface ApiAdapter {
   processPendingAsyncJobs(limit?: number): Promise<ApiResult<AsyncJobDispatchSummary>>;
   getArtifactCoverage(): Promise<ApiResult<ArtifactCoverageCell[]>>;
   getArtifactDuplicates(): Promise<ApiResult<ArtifactDuplicateGroup[]>>;
+  setArtifactSuppressDuplicate(artifactId: string, suppress: boolean): Promise<ApiResult<{ id: string; suppressDuplicate: boolean }>>;
   batchDeleteArtifacts(ids: string[]): Promise<ApiResult<{ deleted: number }>>;
   getStudentProgress(userId: string): Promise<ApiResult<StudentProgressSummary>>;
   clearStudentAssessment(userId: string, assessmentType: "pretest" | "posttest"): Promise<ApiResult<StudentProgressClearResult>>;

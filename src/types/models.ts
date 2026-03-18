@@ -658,6 +658,7 @@ export interface ArtifactCoverageCell {
 export interface ArtifactDuplicateEntry {
   id: string;
   title: string;
+  suppressDuplicate: boolean;
 }
 
 export interface ArtifactDuplicateGroup {

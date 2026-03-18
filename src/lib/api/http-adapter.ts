@@ -508,6 +508,13 @@ export const httpAdapter: ApiAdapter = {
     return { data: res.data, source: "live" as const };
   },
 
+  async setArtifactSuppressDuplicate(artifactId: string, suppress: boolean) {
+    const res = await api.patch(`/admin/artifacts/${artifactId}/suppress-duplicate`, null, {
+      params: { suppress },
+    });
+    return { data: res.data, source: "live" as const };
+  },
+
   async batchDeleteArtifacts(ids: string[]) {
     const res = await api.delete("/admin/artifacts/batch", { data: { ids } });
     return { data: res.data, source: "live" as const };

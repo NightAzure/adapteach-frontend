@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ArrowRight, ChevronDown, ChevronRight, Copy, ExternalLink, LayoutGrid, List, Trash2, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, ChevronDown, ChevronRight, Copy, ExternalLink, LayoutGrid, List, ShieldCheck, Trash2, X } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   useArtifactsPage,
   useBatchDeleteArtifactsMutation,
   useDeleteArtifactMutation,
+  useSuppressDuplicateMutation,
 } from "@/lib/hooks/queries";
 import type { ArtifactCoverageCell, ArtifactDuplicateGroup, ArtifactListQuery, ArtifactType, Difficulty } from "@/types/models";
 
@@ -108,6 +109,7 @@ export default function AdminContentPage() {
   const duplicatesQuery = useArtifactDuplicates();
   const deleteArtifactMutation = useDeleteArtifactMutation();
   const batchDeleteMutation = useBatchDeleteArtifactsMutation();
+  const suppressMutation = useSuppressDuplicateMutation();
 
   // Reset to page 1 if current page exceeds totalPages after a delete or filter change
   useEffect(() => {
@@ -320,51 +322,70 @@ export default function AdminContentPage() {
 
                 {/* Artifact list */}
                 <div className="space-y-2">
-                  {group.artifacts.map((entry, ei) => (
-                    <div
-                      key={entry.id}
-                      className="flex items-center gap-3 rounded-xl border p-3"
-                      style={{ borderColor: "var(--line)", background: "var(--surface-1)" }}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-[var(--ink-800)] truncate">{entry.title}</p>
-                        <p className="mt-0.5 font-mono text-[10px] text-[var(--ink-400)]">{entry.id}</p>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <Link
-                          href={`/admin/content/artifacts/${entry.id}`}
-                          target="_blank"
-                          className="rounded-lg border border-[var(--line)] p-1.5 text-[var(--ink-500)] hover:text-[var(--ink-900)] hover:bg-[var(--surface-2)] transition"
-                          title="Open artifact"
-                        >
-                          <ExternalLink className="size-3.5" />
-                        </Link>
+                  {group.artifacts.map((entry, ei) => {
+                    const isSuppressing = suppressMutation.isPending && suppressMutation.variables?.artifactId === entry.id;
+                    return (
+                      <div
+                        key={entry.id}
+                        className="rounded-xl border p-3 space-y-2"
+                        style={{ borderColor: "var(--line)", background: "var(--surface-1)" }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-[var(--ink-800)] truncate">{entry.title}</p>
+                            <p className="mt-0.5 font-mono text-[10px] text-[var(--ink-400)]">{entry.id}</p>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Link
+                              href={`/admin/content/artifacts/${entry.id}`}
+                              target="_blank"
+                              className="rounded-lg border border-[var(--line)] p-1.5 text-[var(--ink-500)] hover:text-[var(--ink-900)] hover:bg-[var(--surface-2)] transition"
+                              title="Open artifact"
+                            >
+                              <ExternalLink className="size-3.5" />
+                            </Link>
+                            <button
+                              type="button"
+                              title={ei === 0 ? "Keep first copy — delete the others instead" : "Delete this duplicate"}
+                              disabled={deleteArtifactMutation.isPending && deleteArtifactMutation.variables === entry.id}
+                              onClick={() => {
+                                if (!window.confirm(`Delete "${entry.title}" (${entry.id})?\nThis cannot be undone.`)) return;
+                                deleteArtifactMutation.mutate(entry.id, {
+                                  onSuccess: () => {
+                                    toast.success("Duplicate deleted", { description: entry.id });
+                                    if (group.artifacts.length <= 2 && idx < groups.length - 1) setDupGroupIdx(idx + 1);
+                                  },
+                                  onError: (err) => toast.error("Delete failed", { description: String(err) }),
+                                });
+                              }}
+                              className={`rounded-lg border p-1.5 transition disabled:opacity-40 ${
+                                ei === 0
+                                  ? "border-[var(--line)] text-[var(--ink-400)] hover:border-rose-400 hover:text-rose-600"
+                                  : "border-rose-400/40 bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
+                              }`}
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                        {/* Not-a-duplicate action */}
                         <button
                           type="button"
-                          title={ei === 0 ? "Keep first copy — delete the others instead" : "Delete this duplicate"}
-                          disabled={deleteArtifactMutation.isPending && deleteArtifactMutation.variables === entry.id}
-                          onClick={() => {
-                            if (!window.confirm(`Delete "${entry.title}" (${entry.id})?\nThis cannot be undone.`)) return;
-                            deleteArtifactMutation.mutate(entry.id, {
-                              onSuccess: () => {
-                                toast.success("Duplicate deleted", { description: entry.id });
-                                // if last artifact in group removed, advance
-                                if (group.artifacts.length <= 2 && idx < groups.length - 1) setDupGroupIdx(idx + 1);
-                              },
-                              onError: (err) => toast.error("Delete failed", { description: String(err) }),
-                            });
-                          }}
-                          className={`rounded-lg border p-1.5 transition disabled:opacity-40 ${
-                            ei === 0
-                              ? "border-[var(--line)] text-[var(--ink-400)] hover:border-rose-400 hover:text-rose-600"
-                              : "border-rose-400/40 bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
-                          }`}
+                          disabled={isSuppressing}
+                          onClick={() =>
+                            suppressMutation.mutate(
+                              { artifactId: entry.id, suppress: true },
+                              { onSuccess: () => toast.success("Marked as not a duplicate", { description: entry.id }) }
+                            )
+                          }
+                          className="flex w-full items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-0)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--ink-600)] transition hover:border-emerald-400/60 hover:bg-emerald-500/10 hover:text-emerald-700 disabled:opacity-40"
                         >
-                          <Trash2 className="size-3.5" />
+                          <ShieldCheck className="size-3.5 shrink-0" />
+                          {isSuppressing ? "Saving…" : "Mark as not a duplicate"}
                         </button>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
