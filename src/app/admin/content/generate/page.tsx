@@ -23,6 +23,7 @@ export default function GeneratePage() {
   const [batchDifficulties, setBatchDifficulties] = useState<Difficulty[]>(["easy", "moderate", "hard"]);
   const [batchCountPerCombo, setBatchCountPerCombo] = useState(1);
   const [batchTemp, setBatchTemp] = useState(0.7);
+  const [useBatch, setUseBatch] = useState(true);
   const [batchIsQueuing, setBatchIsQueuing] = useState(false);
 
   const corpusDatasets = useCorpusDatasetsPage({ page: 1, pageSize: 50 });
@@ -175,6 +176,18 @@ export default function GeneratePage() {
                     className="w-24 rounded-lg border border-[var(--line)] bg-[var(--surface-1)] px-2 py-1 text-sm"
                   />
                 </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--ink-500)]">Gemini Batch API</p>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={useBatch}
+                      onChange={(e) => setUseBatch(e.target.checked)}
+                    />
+                    Use batch API (50% cheaper)
+                  </label>
+                  <p className="text-xs text-[var(--ink-400)]">Uncheck to call Gemini sequentially.</p>
+                </div>
               </div>
             </div>
           </Card>
@@ -238,6 +251,7 @@ export default function GeneratePage() {
                       temperature: batchTemp,
                       maxContextChars: 4000,
                       maxAttempts: 3,
+                      useBatch,
                     },
                     {
                       onSuccess: () => {

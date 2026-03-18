@@ -38,4 +38,5 @@ export const queryKeys = {
   asyncJobsPage: (query: object) => ["admin", "jobs", "page", query] as const,
   asyncJob: (jobId: string) => ["admin", "jobs", jobId] as const,
   artifactCoverage: ["admin", "artifacts", "coverage"] as const,
+  artifactDuplicates: ["admin", "artifacts", "duplicates"] as const,
 };

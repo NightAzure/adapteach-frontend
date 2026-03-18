@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ArrowRight, ChevronDown, ChevronRight, LayoutGrid, List } from "lucide-react";
+import { AlertTriangle, ArrowRight, ChevronDown, ChevronRight, Copy, LayoutGrid, List, Trash2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,12 @@ import { PageEmptyState, PageErrorState, PageLoadingState } from "@/components/u
 import { SectionHeader } from "@/components/ui/section-header";
 import {
   useArtifactCoverage,
+  useArtifactDuplicates,
   useArtifactsPage,
   useBatchDeleteArtifactsMutation,
   useDeleteArtifactMutation,
 } from "@/lib/hooks/queries";
-import type { ArtifactCoverageCell, ArtifactListQuery, ArtifactType, Difficulty } from "@/types/models";
+import type { ArtifactCoverageCell, ArtifactDuplicateGroup, ArtifactListQuery, ArtifactType, Difficulty } from "@/types/models";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const TYPE_OPTIONS: Array<ArtifactType | "all"> = ["all", "parsons", "tracing", "mutation", "flashcard"];
@@ -100,6 +101,7 @@ export default function AdminContentPage() {
 
   const artifacts = useArtifactsPage(query);
   const coverageQuery = useArtifactCoverage();
+  const duplicatesQuery = useArtifactDuplicates();
   const deleteArtifactMutation = useDeleteArtifactMutation();
   const batchDeleteMutation = useBatchDeleteArtifactsMutation();
 
@@ -229,6 +231,54 @@ export default function AdminContentPage() {
           <p className="text-xs text-[var(--ink-500)]">Loading coverage data…</p>
         )}
       </Card>
+
+      {/* Duplicate Detection Panel */}
+      {(duplicatesQuery.data ?? []).length > 0 && (
+        <Card className="space-y-3 border-amber-500/40" style={{ background: "color-mix(in srgb, var(--surface-1) 85%, #f59e0b10)" }}>
+          <div className="flex items-center gap-3">
+            <Copy className="size-4 text-amber-500 shrink-0" />
+            <div>
+              <CardTitle>Duplicate Artifacts Detected</CardTitle>
+              <CardMeta>{duplicatesQuery.data!.length} group(s) with identical titles in the same concept / type / difficulty slot.</CardMeta>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {(duplicatesQuery.data as ArtifactDuplicateGroup[]).map((group, gi) => (
+              <div key={gi} className="rounded-xl border border-[var(--line)] bg-[var(--surface-0)] p-3 space-y-2">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <Badge label={group.concept} tone="admin" />
+                  <Badge label={group.type} tone="static" />
+                  <Badge label={group.difficulty} tone={group.difficulty as Difficulty} />
+                  <span className="font-semibold text-[var(--ink-800)] truncate max-w-xs">{group.title}</span>
+                  <span className="text-[var(--ink-400)]">({group.artifacts.length} copies)</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {group.artifacts.map((entry) => (
+                    <div key={entry.id} className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-1)] px-2 py-1 text-xs">
+                      <span className="font-mono text-[var(--ink-500)]">{entry.id}</span>
+                      <button
+                        type="button"
+                        title="Delete this artifact"
+                        disabled={deleteArtifactMutation.isPending && deleteArtifactMutation.variables === entry.id}
+                        onClick={() => {
+                          if (!window.confirm(`Delete duplicate artifact "${entry.title}" (${entry.id})?\nThis cannot be undone.`)) return;
+                          deleteArtifactMutation.mutate(entry.id, {
+                            onSuccess: () => toast.success("Duplicate deleted", { description: entry.id }),
+                            onError: (err) => toast.error("Delete failed", { description: String(err) }),
+                          });
+                        }}
+                        className="text-rose-600 hover:text-rose-800 disabled:opacity-40 transition"
+                      >
+                        <Trash2 className="size-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <Card className="space-y-4">
         <div className="grid gap-3 lg:grid-cols-[1.4fr_repeat(5,minmax(0,1fr))]">

@@ -557,6 +557,7 @@ export function useDeleteArtifactMutation() {
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["admin", "artifacts"] });
       qc.invalidateQueries({ queryKey: queryKeys.artifactCoverage });
+      qc.invalidateQueries({ queryKey: queryKeys.artifactDuplicates });
     },
   });
 }
@@ -700,6 +701,14 @@ export function useArtifactCoverage(enabled = true) {
   });
 }
 
+export function useArtifactDuplicates(enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.artifactDuplicates,
+    queryFn: () => apiClient.getArtifactDuplicates().then((res) => res.data),
+    enabled,
+  });
+}
+
 export function useBatchDeleteArtifactsMutation() {
   const qc = useQueryClient();
   return useMutation({
@@ -707,6 +716,7 @@ export function useBatchDeleteArtifactsMutation() {
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["admin", "artifacts"] });
       qc.invalidateQueries({ queryKey: queryKeys.artifactCoverage });
+      qc.invalidateQueries({ queryKey: queryKeys.artifactDuplicates });
     },
   });
 }

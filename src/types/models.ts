@@ -654,3 +654,16 @@ export interface ArtifactCoverageCell {
   difficulty: Difficulty;
   count: number;
 }
+
+export interface ArtifactDuplicateEntry {
+  id: string;
+  title: string;
+}
+
+export interface ArtifactDuplicateGroup {
+  concept: string;
+  type: ArtifactType;
+  difficulty: Difficulty;
+  title: string;
+  artifacts: ArtifactDuplicateEntry[];
+}

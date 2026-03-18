@@ -503,6 +503,11 @@ export const httpAdapter: ApiAdapter = {
     return { data: res.data, source: "live" as const };
   },
 
+  async getArtifactDuplicates() {
+    const res = await api.get("/admin/artifacts/duplicates");
+    return { data: res.data, source: "live" as const };
+  },
+
   async batchDeleteArtifacts(ids: string[]) {
     const res = await api.delete("/admin/artifacts/batch", { data: { ids } });
     return { data: res.data, source: "live" as const };

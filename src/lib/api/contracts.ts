@@ -8,6 +8,7 @@
   ArtifactCheckResult,
   ArtifactCompletionInput,
   ArtifactCoverageCell,
+  ArtifactDuplicateGroup,
   ArtifactIssueInput,
   ArtifactIssueReport,
   ArtifactIssueStatusUpdateInput,
@@ -208,6 +209,7 @@ export interface ApiAdapter {
     temperature?: number;
     maxContextChars?: number;
     maxAttempts?: number;
+    useBatch?: boolean;
   }): Promise<ApiResult<AsyncJobSummary>>;
   getAsyncJobsPage(query: {
     page: number;
@@ -218,6 +220,7 @@ export interface ApiAdapter {
   getAsyncJobById(jobId: string): Promise<ApiResult<AsyncJobSummary>>;
   processPendingAsyncJobs(limit?: number): Promise<ApiResult<AsyncJobDispatchSummary>>;
   getArtifactCoverage(): Promise<ApiResult<ArtifactCoverageCell[]>>;
+  getArtifactDuplicates(): Promise<ApiResult<ArtifactDuplicateGroup[]>>;
   batchDeleteArtifacts(ids: string[]): Promise<ApiResult<{ deleted: number }>>;
   getStudentProgress(userId: string): Promise<ApiResult<StudentProgressSummary>>;
   clearStudentAssessment(userId: string, assessmentType: "pretest" | "posttest"): Promise<ApiResult<StudentProgressClearResult>>;
