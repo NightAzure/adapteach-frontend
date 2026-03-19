@@ -11,6 +11,7 @@ import { Card, CardMeta, CardTitle } from "@/components/ui/card";
 import { PageEmptyState, PageErrorState, PageLoadingState } from "@/components/ui/page-states";
 import { SectionHeader } from "@/components/ui/section-header";
 import {
+  useArtifactCoverage,
   useClearStudentActivityMutation,
   useClearStudentAllProgressMutation,
   useClearStudentAssessmentMutation,
@@ -75,6 +76,7 @@ export default function AdminStudentsPage() {
   const clearBktMutation = useClearStudentBktMutation();
   const overrideBktMutation = useOverrideStudentBktMutation();
   const clearActivityMutation = useClearStudentActivityMutation();
+  const artifactCoverage = useArtifactCoverage();
   const clearAllMutation = useClearStudentAllProgressMutation();
 
   // BKT edit state: concept -> draft percentage string
@@ -892,8 +894,7 @@ export default function AdminStudentsPage() {
                     </div>
 
                     {/* BKT mastery */}
-                    {studentProgress.data.bktConcepts.length > 0 && (
-                      <div className="space-y-2">
+                    <div className="space-y-2">
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--ink-500)]">BKT Mastery</p>
                           {bktEditDrafts === null ? (
@@ -901,8 +902,14 @@ export default function AdminStudentsPage() {
                               type="button"
                               onClick={() => {
                                 const drafts: Record<string, string> = {};
-                                for (const c of studentProgress.data!.bktConcepts) {
-                                  drafts[c.concept] = (c.pKnow * 100).toFixed(0);
+                                if (studentProgress.data!.bktConcepts.length > 0) {
+                                  for (const c of studentProgress.data!.bktConcepts) {
+                                    drafts[c.concept] = (c.pKnow * 100).toFixed(0);
+                                  }
+                                } else {
+                                  // No BKT data yet — seed from distinct concepts in artifact coverage
+                                  const concepts = [...new Set((artifactCoverage.data ?? []).map((cell) => cell.concept))].sort();
+                                  for (const c of concepts) drafts[c] = "5";
                                 }
                                 setBktEditDrafts(drafts);
                               }}
@@ -944,16 +951,20 @@ export default function AdminStudentsPage() {
                         </div>
 
                         {bktEditDrafts === null ? (
-                          <div className="flex flex-wrap gap-2">
-                            {studentProgress.data.bktConcepts.map((c) => (
-                              <div key={c.concept} className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-0)] px-3 py-1.5 text-xs">
-                                <span className="font-medium text-[var(--ink-800)]">{c.concept}</span>
-                                <span className={`font-bold ${c.pKnow >= 0.7 ? "text-emerald-600" : c.pKnow >= 0.4 ? "text-amber-600" : "text-rose-600"}`}>
-                                  {(c.pKnow * 100).toFixed(0)}%
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                          studentProgress.data.bktConcepts.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {studentProgress.data.bktConcepts.map((c) => (
+                                <div key={c.concept} className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-0)] px-3 py-1.5 text-xs">
+                                  <span className="font-medium text-[var(--ink-800)]">{c.concept}</span>
+                                  <span className={`font-bold ${c.pKnow >= 0.7 ? "text-emerald-600" : c.pKnow >= 0.4 ? "text-amber-600" : "text-rose-600"}`}>
+                                    {(c.pKnow * 100).toFixed(0)}%
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-[var(--ink-500)]">No BKT data yet — click Edit to set initial mastery values.</p>
+                          )
                         ) : (
                           <div className="grid grid-cols-2 gap-2">
                             {Object.entries(bktEditDrafts).map(([concept, val]) => (
@@ -975,7 +986,6 @@ export default function AdminStudentsPage() {
                           </div>
                         )}
                       </div>
-                    )}
 
                     {/* Clear actions */}
                     <div className="space-y-2 border-t border-[var(--line)] pt-4">
