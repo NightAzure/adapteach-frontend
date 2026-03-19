@@ -763,6 +763,17 @@ export function useClearStudentBktMutation() {
   });
 }
 
+export function useOverrideStudentBktMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, concepts }: { userId: string; concepts: { concept: string; pKnow: number }[] }) =>
+      apiClient.overrideStudentBkt(userId, concepts),
+    onSettled: (_data, _err, vars) => {
+      qc.invalidateQueries({ queryKey: ["admin", "students", vars.userId, "progress"] });
+    },
+  });
+}
+
 export function useClearStudentActivityMutation() {
   const qc = useQueryClient();
   return useMutation({

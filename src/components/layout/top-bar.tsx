@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { LogOut, Moon, Sun, ChevronRight } from "lucide-react";
-import { useTheme } from "next-themes";
+import { LogOut, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { apiClient } from "@/lib/api/client";
 import { useSessionStore } from "@/lib/auth/session-store";
 
@@ -44,7 +44,6 @@ function useBreadcrumbs() {
 }
 
 export function TopBar() {
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const user = useSessionStore((state) => state.user);
   const clearSession = useSessionStore((state) => state.clear);
@@ -99,15 +98,7 @@ export function TopBar() {
           Hi, {firstName} 👋
         </span>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          aria-label="Toggle theme"
-          className="rounded-full"
-        >
-          {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
-        </Button>
+        <ThemeToggle />
 
         <div
           className="flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium"

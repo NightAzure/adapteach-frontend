@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as Select from "@radix-ui/react-select";
-import { ChevronDown, FlaskConical, GraduationCap, Sparkles } from "lucide-react";
+import { ChevronDown, Eye, EyeOff, FlaskConical, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { apiClient } from "@/lib/api/client";
 import { useSessionStore } from "@/lib/auth/session-store";
 import { useTelemetryMutation } from "@/lib/hooks/queries";
@@ -29,6 +30,7 @@ export default function LoginPage() {
   const { mutate: sendTelemetry } = useTelemetryMutation();
   const [role, setRole] = useState<UserRole>("student");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (existingUser) {
@@ -52,12 +54,16 @@ export default function LoginPage() {
 
   return (
     <main
-      className="grid min-h-screen place-items-center p-4"
+      className="relative grid min-h-screen place-items-center p-4"
       style={{
         background:
           "radial-gradient(ellipse 80% 60% at 50% -20%, color-mix(in srgb, var(--brand-500) 18%, transparent), transparent), var(--surface-0)",
       }}
     >
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
+
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="mb-8 text-center animate-fade-up">
@@ -122,18 +128,28 @@ export default function LoginPage() {
                 />
               </label>
 
-              <label className="block space-y-1.5">
+              <div className="space-y-1.5">
                 <span className="text-sm font-medium text-[var(--ink-800)]">Password</span>
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  className="w-full rounded-[var(--radius-md)] border bg-[var(--surface-0)] px-3 py-2.5 text-sm transition-colors focus:border-[var(--brand-500)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--brand-500)_30%,transparent)]"
-                  style={{ borderColor: "var(--line)", color: "var(--ink-900)" }}
-                  {...register("password", { required: true })}
-                />
-              </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                    className="w-full rounded-[var(--radius-md)] border bg-[var(--surface-0)] px-3 py-2.5 pr-10 text-sm transition-colors focus:border-[var(--brand-500)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--brand-500)_30%,transparent)]"
+                    style={{ borderColor: "var(--line)", color: "var(--ink-900)" }}
+                    {...register("password", { required: true })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-400)] hover:text-[var(--ink-700)]"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
+              </div>
 
               <div className="space-y-1.5">
                 <span className="text-sm font-medium text-[var(--ink-800)]">Role</span>

@@ -17,6 +17,7 @@ import {
   useClearStudentBktMutation,
   useDeleteStudentMutation,
   useInviteStudentMutation,
+  useOverrideStudentBktMutation,
   useResendInviteMutation,
   useRevokeInviteMutation,
   useStudentInvitesPage,
@@ -72,8 +73,12 @@ export default function AdminStudentsPage() {
   const updateProtocolMutation = useUpdateStudentProtocolControlMutation();
   const clearAssessmentMutation = useClearStudentAssessmentMutation();
   const clearBktMutation = useClearStudentBktMutation();
+  const overrideBktMutation = useOverrideStudentBktMutation();
   const clearActivityMutation = useClearStudentActivityMutation();
   const clearAllMutation = useClearStudentAllProgressMutation();
+
+  // BKT edit state: concept -> draft percentage string
+  const [bktEditDrafts, setBktEditDrafts] = useState<Record<string, string> | null>(null);
 
   // Modal states
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -889,17 +894,86 @@ export default function AdminStudentsPage() {
                     {/* BKT mastery */}
                     {studentProgress.data.bktConcepts.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--ink-500)]">BKT Mastery</p>
-                        <div className="flex flex-wrap gap-2">
-                          {studentProgress.data.bktConcepts.map((c) => (
-                            <div key={c.concept} className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-0)] px-3 py-1.5 text-xs">
-                              <span className="font-medium text-[var(--ink-800)]">{c.concept}</span>
-                              <span className={`font-bold ${c.pKnow >= 0.7 ? "text-emerald-600" : c.pKnow >= 0.4 ? "text-amber-600" : "text-rose-600"}`}>
-                                {(c.pKnow * 100).toFixed(0)}%
-                              </span>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--ink-500)]">BKT Mastery</p>
+                          {bktEditDrafts === null ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const drafts: Record<string, string> = {};
+                                for (const c of studentProgress.data!.bktConcepts) {
+                                  drafts[c.concept] = (c.pKnow * 100).toFixed(0);
+                                }
+                                setBktEditDrafts(drafts);
+                              }}
+                              className="rounded px-2 py-0.5 text-[10px] font-semibold text-[var(--ink-500)] border border-[var(--line)] hover:bg-[var(--surface-2)] transition"
+                            >
+                              Edit
+                            </button>
+                          ) : (
+                            <div className="flex gap-1.5">
+                              <button
+                                type="button"
+                                disabled={overrideBktMutation.isPending}
+                                onClick={() => {
+                                  const concepts = Object.entries(bktEditDrafts).map(([concept, val]) => ({
+                                    concept,
+                                    pKnow: Math.max(1, Math.min(99, Number(val))) / 100,
+                                  }));
+                                  overrideBktMutation.mutate(
+                                    { userId: progressUserId, concepts },
+                                    {
+                                      onSuccess: () => { toast.success("BKT mastery updated"); setBktEditDrafts(null); },
+                                      onError: () => toast.error("BKT update failed"),
+                                    },
+                                  );
+                                }}
+                                className="rounded px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-400/50 bg-emerald-500/10 hover:bg-emerald-500/20 transition disabled:opacity-40"
+                              >
+                                {overrideBktMutation.isPending ? "Saving…" : "Save"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setBktEditDrafts(null)}
+                                className="rounded px-2 py-0.5 text-[10px] font-semibold text-[var(--ink-500)] border border-[var(--line)] hover:bg-[var(--surface-2)] transition"
+                              >
+                                Cancel
+                              </button>
                             </div>
-                          ))}
+                          )}
                         </div>
+
+                        {bktEditDrafts === null ? (
+                          <div className="flex flex-wrap gap-2">
+                            {studentProgress.data.bktConcepts.map((c) => (
+                              <div key={c.concept} className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-0)] px-3 py-1.5 text-xs">
+                                <span className="font-medium text-[var(--ink-800)]">{c.concept}</span>
+                                <span className={`font-bold ${c.pKnow >= 0.7 ? "text-emerald-600" : c.pKnow >= 0.4 ? "text-amber-600" : "text-rose-600"}`}>
+                                  {(c.pKnow * 100).toFixed(0)}%
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2">
+                            {Object.entries(bktEditDrafts).map(([concept, val]) => (
+                              <div key={concept} className="flex items-center gap-2 rounded-lg border border-[var(--line)] bg-[var(--surface-0)] px-3 py-1.5 text-xs">
+                                <span className="flex-1 font-medium text-[var(--ink-800)]">{concept}</span>
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={99}
+                                    value={val}
+                                    onChange={(e) => setBktEditDrafts((prev) => prev ? { ...prev, [concept]: e.target.value } : prev)}
+                                    className="w-14 rounded border border-[var(--line)] bg-[var(--surface-1)] px-1.5 py-0.5 text-right text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[var(--brand-400)]"
+                                  />
+                                  <span className="text-[var(--ink-400)]">%</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
 

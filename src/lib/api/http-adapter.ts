@@ -532,6 +532,10 @@ export const httpAdapter: ApiAdapter = {
     const res = await api.delete(`/admin/students/${userId}/progress/bkt`);
     return { data: res.data, source: "live" as const };
   },
+  async overrideStudentBkt(userId: string, concepts: { concept: string; pKnow: number }[]) {
+    const res = await api.put(`/admin/students/${userId}/progress/bkt`, { concepts });
+    return { data: res.data, source: "live" as const };
+  },
   async clearStudentActivity(userId: string) {
     const res = await api.delete(`/admin/students/${userId}/progress/activity`);
     return { data: res.data, source: "live" as const };

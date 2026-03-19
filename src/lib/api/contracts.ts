@@ -226,6 +226,7 @@ export interface ApiAdapter {
   getStudentProgress(userId: string): Promise<ApiResult<StudentProgressSummary>>;
   clearStudentAssessment(userId: string, assessmentType: "pretest" | "posttest"): Promise<ApiResult<StudentProgressClearResult>>;
   clearStudentBkt(userId: string): Promise<ApiResult<StudentProgressClearResult>>;
+  overrideStudentBkt(userId: string, concepts: { concept: string; pKnow: number }[]): Promise<ApiResult<{ concept: string; pKnow: number }[]>>;
   clearStudentActivity(userId: string): Promise<ApiResult<StudentProgressClearResult>>;
   clearStudentAllProgress(userId: string): Promise<ApiResult<StudentProgressClearResult>>;
 }

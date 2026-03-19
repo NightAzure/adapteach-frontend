@@ -7,6 +7,7 @@ import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSessionStore } from "@/lib/auth/session-store";
 import { apiClient } from "@/lib/api/client";
 import type { StudentInvite } from "@/types/models";
@@ -103,7 +104,10 @@ function OnboardingPageContent() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 px-6 py-10">
+    <main className="relative mx-auto max-w-3xl space-y-6 px-6 py-10">
+      <div className="absolute right-0 top-4">
+        <ThemeToggle />
+      </div>
       <SectionHeader
         eyebrow="Student Onboarding"
         title="Accept Study Invitation"

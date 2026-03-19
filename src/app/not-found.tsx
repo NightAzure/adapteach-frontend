@@ -1,14 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function NotFound() {
   return (
     <main
-      className="grid min-h-screen place-items-center p-8"
+      className="relative grid min-h-screen place-items-center p-8"
       style={{
         background:
           "radial-gradient(ellipse 80% 60% at 50% -20%, color-mix(in srgb, var(--brand-500) 12%, transparent), transparent), var(--surface-0)",
       }}
     >
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="text-center">
         <p
           className="text-8xl font-bold leading-none tracking-tight"
