@@ -51,8 +51,9 @@ function useStudentNav() {
   const user = useSessionStore((state) => state.user);
   const dashboard = useStudentDashboard(user?.id ?? "");
   const surveyPhase = dashboard.data?.studyPhase === "survey";
+  const surveySubmitted = dashboard.data?.surveySubmitted ?? false;
   return surveyPhase
-    ? [...studentNavBase, { href: "/student/survey", label: "Survey", icon: MessageSquareHeart, badge: "Due" } as NavItem]
+    ? [...studentNavBase, { href: "/student/survey", label: "Survey", icon: MessageSquareHeart, badge: surveySubmitted ? undefined : "Due" } as NavItem]
     : studentNavBase;
 }
 

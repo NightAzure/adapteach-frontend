@@ -57,6 +57,7 @@ export interface DashboardStudent {
     posttestDueAt?: string;
   };
   studyPhase?: "pretest" | "intervention" | "posttest" | "survey";
+  surveySubmitted?: boolean;
 }
 
 export interface StudentProtocolOverride {
