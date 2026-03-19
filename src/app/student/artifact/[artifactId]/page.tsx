@@ -22,7 +22,6 @@ import {
   useStudentHistory,
 } from "@/lib/hooks/queries";
 import { useTelemetry } from "@/lib/telemetry/useTelemetry";
-import { nextStaticArtifactId } from "@/lib/utils/progression";
 import { toast } from "@/lib/toast";
 import type { Artifact, DashboardStudent } from "@/types/models";
 
@@ -151,10 +150,7 @@ export default function ArtifactDetailPage() {
   const dashboardData = dashboard.data;
   const historyRows = history.data ?? [];
   const item = artifact.data;
-  const assignedArtifactId =
-    dashboardData?.recommendationMode === "adaptive"
-      ? dashboardData?.nextArtifactId
-      : nextStaticArtifactId(historyRows);
+  const assignedArtifactId = dashboardData?.nextArtifactId;
   const sequencePosition = (dashboardData?.completedArtifacts ?? historyRows.length) + 1;
 
   useEffect(() => {
@@ -524,14 +520,7 @@ export default function ArtifactDetailPage() {
               queryKey: queryKeys.studentDashboard(user.id),
               staleTime: 0,
             });
-            const nextId =
-              fresh?.recommendationMode === "adaptive"
-                ? fresh?.nextArtifactId
-                : nextStaticArtifactId(
-                    history.data
-                      ? [...history.data, { artifactId: item.id } as never]
-                      : [{ artifactId: item.id } as never],
-                  );
+            const nextId = fresh?.nextArtifactId;
             if (nextId && nextId !== item.id) {
               router.push(`/student/artifact/${nextId}`);
             } else {

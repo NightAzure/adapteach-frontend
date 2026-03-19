@@ -201,7 +201,7 @@ export default function StudentDashboardPage() {
               </p>
             </div>
             <Link href={`/student/artifact/${data.nextArtifactId}`}>
-              <Button size="lg" className="shrink-0 bg-white text-white hover:bg-emerald-50">
+              <Button size="lg" className="shrink-0 bg-white text-emerald-800 hover:bg-emerald-50">
                 Start Now <ArrowRight className="size-4" />
               </Button>
             </Link>
