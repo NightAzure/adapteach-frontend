@@ -191,7 +191,7 @@ export default function StudentDashboardPage() {
 
       {/* ── Next activity CTA ────────────────────────────────── */}
       {data.nextArtifactId && phase !== "pretest" ? (
-        <Card className="border-none bg-[linear-gradient(135deg,var(--brand-700),var(--brand-500))] text-white">
+        <Card className="border-none bg-[linear-gradient(135deg,var(--brand-700)_0%,var(--brand-500)_55%,#17332f_100%)] text-white">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <CardMeta className="text-emerald-100">Your next activity is ready</CardMeta>
@@ -201,7 +201,7 @@ export default function StudentDashboardPage() {
               </p>
             </div>
             <Link href={`/student/artifact/${data.nextArtifactId}`}>
-              <Button size="lg" className="shrink-0 border-2 border-white bg-transparent text-white hover:bg-white hover:text-emerald-800">
+              <Button size="lg" className="shrink-0 bg-white text-emerald-900 hover:bg-emerald-50">
                 Start Now <ArrowRight className="size-4" />
               </Button>
             </Link>
