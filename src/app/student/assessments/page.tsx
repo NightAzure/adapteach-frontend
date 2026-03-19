@@ -41,10 +41,10 @@ export default function StudentAssessmentsPage() {
   const posttestCompleted = data.assessmentStatus?.posttestCompleted ?? false;
   const pretestWindowOpen = data.assessmentStatus?.pretestWindowOpen ?? false;
   const posttestWindowOpen = data.assessmentStatus?.posttestWindowOpen ?? false;
-  // Rely on backend-computed phase/window rather than raw counts — the backend
+  const phase = data.studyPhase;
+  // Rely on backend-computed phase rather than raw counts — the backend
   // applies intervention_min_artifacts correctly.
   const interventionComplete = phase !== "pretest" && phase !== "intervention";
-  const phase = data.studyPhase;
 
   const formatDue = (iso?: string) => (iso ? new Date(iso).toLocaleString() : null);
 
