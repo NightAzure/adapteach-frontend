@@ -24,14 +24,17 @@ export default function SurveyPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
+    // Wait until we have fresh (non-loading) data before gating — avoids redirecting
+    // on stale cache right after post-test submission invalidates the query.
+    if (dashboard.isLoading || dashboard.isFetching) return;
     if (!dashboard.data) return;
     if (dashboard.data.studyPhase !== "survey") {
       toast.error("Survey not available yet", { description: "Please complete all required steps first." });
       router.replace("/student/dashboard");
     }
-  }, [dashboard.data, router]);
+  }, [dashboard.data, dashboard.isLoading, dashboard.isFetching, router]);
 
-  if (survey.isLoading || dashboard.isLoading) return <PageLoadingState title="Loading survey…" />;
+  if (survey.isLoading || dashboard.isLoading || dashboard.isFetching) return <PageLoadingState title="Loading survey…" />;
   if (survey.isError || dashboard.isError) return <PageErrorState title="Survey failed to load" backHref="/student/dashboard" />;
   if (!survey.data || survey.data.length === 0) return <PageEmptyState title="No survey available" />;
 

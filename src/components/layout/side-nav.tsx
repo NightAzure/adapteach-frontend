@@ -10,6 +10,7 @@ import {
   Database,
   Home,
   LibraryBig,
+  MessageSquareHeart,
   MessageSquareText,
   ScrollText,
   Settings,
@@ -19,10 +20,12 @@ import {
   Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { useSessionStore } from "@/lib/auth/session-store";
+import { useStudentDashboard } from "@/lib/hooks/queries";
 
-export type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }>; exact?: boolean };
+export type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }>; exact?: boolean; badge?: string };
 
-const studentNav: NavItem[] = [
+const studentNavBase: NavItem[] = [
   { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/student/session", label: "Activities", icon: BookOpenCheck },
   { href: "/student/assessments", label: "Assessments", icon: ClipboardList },
@@ -44,13 +47,19 @@ const adminNav: NavItem[] = [
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-function navForRole(role: "student" | "admin") {
-  return role === "student" ? studentNav : adminNav;
+function useStudentNav() {
+  const user = useSessionStore((state) => state.user);
+  const dashboard = useStudentDashboard(user?.id ?? "", Boolean(user?.id));
+  const surveyPhase = dashboard.data?.studyPhase === "survey";
+  return surveyPhase
+    ? [...studentNavBase, { href: "/student/survey", label: "Survey", icon: MessageSquareHeart, badge: "Due" }]
+    : studentNavBase;
 }
 
 export function SideNav({ role }: { role: "student" | "admin" }) {
   const pathname = usePathname();
-  const nav = navForRole(role);
+  const studentNav = useStudentNav();
+  const nav = role === "student" ? studentNav : adminNav;
 
   return (
     <aside
@@ -91,7 +100,12 @@ export function SideNav({ role }: { role: "student" | "admin" }) {
                   active ? "text-[var(--brand-600)]" : "text-[var(--ink-500)] group-hover:text-[var(--ink-700)]",
                 )}
               />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.badge && (
+                <span className="rounded-full bg-[var(--brand-600)] px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -102,7 +116,8 @@ export function SideNav({ role }: { role: "student" | "admin" }) {
 
 export function MobileNav({ role }: { role: "student" | "admin" }) {
   const pathname = usePathname();
-  const nav = navForRole(role);
+  const studentNav = useStudentNav();
+  const nav = role === "student" ? studentNav : adminNav;
 
   return (
     <nav className="border-b bg-[var(--surface-header)] px-2 py-2 backdrop-blur-sm lg:hidden" style={{ borderColor: "var(--line)" }}>
@@ -123,6 +138,11 @@ export function MobileNav({ role }: { role: "student" | "admin" }) {
             >
               <Icon className="size-3.5" />
               {item.label}
+              {item.badge && (
+                <span className="rounded-full bg-[var(--brand-600)] px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}
