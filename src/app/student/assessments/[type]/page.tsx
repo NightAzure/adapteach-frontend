@@ -94,8 +94,8 @@ export default function StudentAssessmentRunPage() {
   const pretestWindowOpen = pretestWindowOpenBase;
   const posttestWindowOpen = posttestWindowOpenBase;
 
-  const interventionComplete = data.completedArtifacts >= data.totalArtifacts;
   const phase = data.studyPhase;
+  const interventionComplete = phase !== "pretest" && phase !== "intervention";
 
   const state =
     type === "pretest"
