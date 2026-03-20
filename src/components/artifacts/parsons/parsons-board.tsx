@@ -159,7 +159,8 @@ import { useMemo, useState } from "react";
 import {
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   closestCenter,
@@ -210,27 +211,27 @@ function SortableLine({
           : isCorrect
             ? "border-emerald-500 bg-emerald-500/10"
             : "border-[var(--line)] bg-[var(--surface-0)] hover:border-[var(--brand-500)] hover:shadow-[var(--shadow-card)]"
-      }`}
+      } ${isDragging ? "touch-none" : ""}`}
       aria-label={`Code line ${index + 1} of ${total}`}
     >
-      {/* Grip handle */}
+      {/* Grip handle — wider tap target on mobile */}
       <button
-        className={`flex items-center justify-center rounded-l-[var(--radius-md)] px-2 text-[var(--ink-400)] transition-colors group-hover:bg-[var(--surface-2)] group-hover:text-[var(--ink-600)] ${
+        className={`flex items-center justify-center rounded-l-[var(--radius-md)] px-3 text-[var(--ink-400)] transition-colors group-hover:bg-[var(--surface-2)] group-hover:text-[var(--ink-600)] touch-none ${
           isCorrect ? "text-emerald-400" : ""
-        } ${locked ? "cursor-not-allowed opacity-40" : "cursor-grab"}`}
+        } ${locked ? "cursor-not-allowed opacity-40" : "cursor-grab active:cursor-grabbing"}`}
         {...attributes}
         {...(locked ? {} : listeners)}
         aria-label="Drag handle"
         tabIndex={-1}
         disabled={locked}
       >
-        <GripVertical className="size-4 shrink-0" />
+        <GripVertical className="size-5 shrink-0" />
       </button>
 
       {/* Line content */}
-      <div className="flex flex-1 items-center gap-2 py-2.5 pr-3">
+      <div className="flex flex-1 items-center gap-2 overflow-hidden py-2.5 pr-3">
         <code
-          className={`whitespace-pre-wrap font-mono text-[13px] leading-relaxed ${
+          className={`min-w-0 overflow-x-auto whitespace-pre font-mono text-[12px] leading-relaxed sm:text-[13px] ${
             isCorrect ? "text-emerald-800" : "text-[var(--ink-800)]"
           }`}
         >
@@ -270,7 +271,11 @@ export function ParsonsBoard({
   locked?: boolean;
 }) {
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    // Mouse: activate after tiny movement to avoid blocking clicks
+    useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
+    // Touch: delay 250 ms so normal page scrolling still works; tolerance allows
+    // slight finger movement during the hold without cancelling the drag
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
   const [items, setItems] = useState<LineItem[]>(() => {

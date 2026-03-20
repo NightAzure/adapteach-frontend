@@ -96,7 +96,13 @@ export default function SurveyPage() {
         payload: { answers },
       });
       setSubmitted(true);
-    } catch {
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 409) {
+        // Already submitted on the server — treat as success
+        setSubmitted(true);
+        return;
+      }
       toast.error("Couldn't submit survey", { description: "Please try again in a moment." });
     } finally {
       setSubmitting(false);
@@ -234,7 +240,7 @@ export default function SurveyPage() {
           <div className="flex items-center gap-2">
             <p className="text-xs font-medium text-[var(--ink-700)]">Submit now?</p>
             <Button variant="secondary" size="sm" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-            <Button size="sm" loading={submitting} onClick={handleSubmit}>Yes, submit</Button>
+            <Button size="sm" loading={submitting} disabled={submitting} onClick={handleSubmit}>Yes, submit</Button>
           </div>
         ) : (
           <Button

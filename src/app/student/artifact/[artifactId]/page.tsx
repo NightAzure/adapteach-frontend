@@ -181,9 +181,14 @@ export default function ArtifactDetailPage() {
     return <PageEmptyState title="Activity not available" message="Return to your session to load the assigned activity." />;
   }
   if (!assignedArtifactId) {
+    // Dashboard may still be refetching right after completing an artifact —
+    // show a spinner instead of an error so the user never sees a false lock.
+    if (dashboard.isFetching) return <PageLoadingState title="Loading next activity…" />;
     return <PageErrorState title="No pending activity" message="Your sequence has no pending activity right now." backHref="/student/session" />;
   }
   if (artifactId !== assignedArtifactId) {
+    // Same guard: if the dashboard is mid-refetch, wait for it to settle.
+    if (dashboard.isFetching) return <PageLoadingState title="Loading next activity…" />;
     return (
       <PageErrorState
         title="Activity locked"
@@ -515,11 +520,15 @@ export default function ArtifactDetailPage() {
               correctness: lastScore,
               responseSummary: "Learner finished artifact workspace.",
             });
-            // Refetch dashboard to get the newly assigned next artifact
+            // Cancel any in-flight invalidation refetch so we don't race, then
+            // fetch the authoritative fresh dashboard and pin it in the cache
+            // before navigating so the next page never sees stale nextArtifactId.
+            await queryClient.cancelQueries({ queryKey: queryKeys.studentDashboard(user.id) });
             const fresh = await queryClient.fetchQuery<DashboardStudent>({
               queryKey: queryKeys.studentDashboard(user.id),
               staleTime: 0,
             });
+            queryClient.setQueryData(queryKeys.studentDashboard(user.id), fresh);
             const nextId = fresh?.nextArtifactId;
             if (nextId && nextId !== item.id) {
               router.push(`/student/artifact/${nextId}`);
