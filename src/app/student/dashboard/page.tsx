@@ -168,21 +168,21 @@ export default function StudentDashboardPage() {
 
       {/* ── Pre-test required banner ──────────────────────────── */}
       {phase === "pretest" && !pretestCompleted && (
-        <Card className="flex flex-col gap-4 border-amber-400 bg-amber-100 dark:border-amber-500/60 dark:bg-amber-500/10 md:flex-row md:items-center md:justify-between">
+        <Card className="flex flex-col gap-4 border-none bg-[linear-gradient(135deg,#92400e_0%,#b45309_55%,#d97706_100%)] text-white md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-200 dark:bg-amber-500/20">
-              <ClipboardList className="size-5 text-amber-800 dark:text-amber-400" />
+            <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/20">
+              <ClipboardList className="size-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-amber-950 dark:text-amber-300">Pre-test required before activities</CardTitle>
-              <CardMeta className="mt-0.5 text-amber-800 dark:text-amber-400">
+              <CardTitle className="text-white">Pre-test required before activities</CardTitle>
+              <CardMeta className="mt-0.5 text-amber-100">
                 You need to complete the pre-test first. It measures your starting knowledge so we
                 can track your progress through the study. Activities unlock once it is done.
               </CardMeta>
             </div>
           </div>
           <Link href="/student/assessments/pretest" className="shrink-0">
-            <Button className="w-full bg-amber-600 text-white hover:bg-amber-700 md:w-auto">
+            <Button className="w-full border-2 border-white bg-transparent text-white hover:bg-white hover:text-amber-900 md:w-auto">
               Go to Pre-test <ArrowRight className="size-4" />
             </Button>
           </Link>
