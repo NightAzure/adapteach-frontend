@@ -168,13 +168,13 @@ export default function StudentDashboardPage() {
 
       {/* ── Pre-test required banner ──────────────────────────── */}
       {phase === "pretest" && !pretestCompleted && (
-        <Card className="flex flex-col gap-4 border-amber-500/60 bg-amber-50 dark:bg-amber-500/10 md:flex-row md:items-center md:justify-between">
+        <Card className="flex flex-col gap-4 border-amber-400 bg-amber-100 dark:border-amber-500/60 dark:bg-amber-500/10 md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-500/20">
-              <ClipboardList className="size-5 text-amber-700 dark:text-amber-400" />
+            <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-200 dark:bg-amber-500/20">
+              <ClipboardList className="size-5 text-amber-800 dark:text-amber-400" />
             </div>
             <div>
-              <CardTitle className="text-amber-900 dark:text-amber-300">Pre-test required before activities</CardTitle>
+              <CardTitle className="text-amber-950 dark:text-amber-300">Pre-test required before activities</CardTitle>
               <CardMeta className="mt-0.5 text-amber-800 dark:text-amber-400">
                 You need to complete the pre-test first. It measures your starting knowledge so we
                 can track your progress through the study. Activities unlock once it is done.
