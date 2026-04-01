@@ -11,13 +11,14 @@ import type { UserRole } from "@/types/models";
 export function AppShell({ role, children }: { role: UserRole; children: React.ReactNode }) {
   const user = useSessionStore((state) => state.user);
   const bootstrapping = useSessionStore((state) => state.bootstrapping);
+  const isRefreshing = useSessionStore((state) => state.isRefreshing);
   const setRoleHint = useSessionStore((state) => state.setRoleHint);
 
   useEffect(() => {
     setRoleHint(role);
   }, [role, setRoleHint]);
 
-  if (bootstrapping) {
+  if (bootstrapping || isRefreshing) {
     return <div className="grid min-h-screen place-items-center"><div className="size-8 animate-spin rounded-full border-4 border-[var(--brand-200)] border-t-[var(--brand-600)]" /></div>;
   }
 

@@ -44,11 +44,25 @@ let refreshPromise: Promise<boolean> | null = null;
 
 async function tryRefresh(): Promise<boolean> {
   if (!refreshPromise) {
+    // Signal to the UI that a token refresh is in progress so protected pages
+    // can defer auth-gated rendering instead of flashing error states.
+    if (typeof window !== "undefined") {
+      import("@/lib/auth/session-store").then(({ useSessionStore }) => {
+        useSessionStore.getState().setIsRefreshing(true);
+      });
+    }
     refreshPromise = api
       .post("/auth/refresh")
       .then(() => true)
       .catch(() => false)
-      .finally(() => { refreshPromise = null; });
+      .finally(() => {
+        refreshPromise = null;
+        if (typeof window !== "undefined") {
+          import("@/lib/auth/session-store").then(({ useSessionStore }) => {
+            useSessionStore.getState().setIsRefreshing(false);
+          });
+        }
+      });
   }
   return refreshPromise;
 }

@@ -32,6 +32,12 @@ export function useStudentDashboard(userId: string) {
     queryKey: queryKeys.studentDashboard(userId),
     queryFn: () => apiClient.getStudentDashboard(userId).then((res) => res.data),
     enabled: Boolean(userId),
+    // Don't treat the dashboard as stale for 90 seconds after it was last fetched.
+    // Without this, TanStack Query re-fetches on every navigation with staleTime=0,
+    // creating a brief window where isFetching=false but data is still the old value
+    // (before the fetch has started) — which caused "Activity locked" flashes and
+    // wiped in-progress survey answers when the form unmounted.
+    staleTime: 90_000,
   });
 }
 

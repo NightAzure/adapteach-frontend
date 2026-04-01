@@ -124,6 +124,7 @@ export default function ArtifactDetailPage() {
   const artifactId = params?.artifactId;
   const router = useRouter();
   const user = useSessionStore((state) => state.user);
+  const isRefreshing = useSessionStore((state) => state.isRefreshing);
   const artifact = useArtifact(artifactId ?? "");
   const dashboard = useStudentDashboard(user?.id ?? "");
   const history = useStudentHistory(user?.id ?? "");
@@ -171,7 +172,7 @@ export default function ArtifactDetailPage() {
     });
   }, [artifactId, assignedArtifactId, dashboardData, history.data, item, sequencePosition, track, user]);
 
-  if (artifact.isLoading || dashboard.isLoading || history.isLoading) {
+  if (artifact.isLoading || dashboard.isLoading || history.isLoading || isRefreshing) {
     return <PageLoadingState title="Loading activity…" />;
   }
   if (artifact.isError || dashboard.isError || history.isError) {

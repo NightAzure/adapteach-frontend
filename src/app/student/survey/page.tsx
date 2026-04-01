@@ -36,7 +36,9 @@ export default function SurveyPage() {
 
   const alreadySubmitted = dashboard.data?.surveySubmitted ?? false;
 
-  if (survey.isLoading || dashboard.isLoading || dashboard.isFetching) return <PageLoadingState title="Loading survey…" />;
+  // Only block on initial load — background refetches (isFetching) must NOT
+  // unmount the form or the user's in-progress answers will be wiped.
+  if (survey.isLoading || dashboard.isLoading) return <PageLoadingState title="Loading survey…" />;
   if (survey.isError || dashboard.isError) return <PageErrorState title="Survey failed to load" backHref="/student/dashboard" />;
   if (!survey.data || survey.data.length === 0) return <PageEmptyState title="No survey available" />;
 
