@@ -21,7 +21,6 @@ export default function SurveyPage() {
   const [answers, setAnswers] = useState<Record<string, number | string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     // Wait until we have fresh (non-loading) data before gating — avoids redirecting
@@ -83,7 +82,6 @@ export default function SurveyPage() {
       toast.hint("Almost there!", { description: `${survey.data!.length - answeredCount} question(s) still need an answer.` });
       return;
     }
-    setConfirmOpen(false);
     setSubmitting(true);
     try {
       const responses = Object.entries(answers).map(([questionId, value]) =>
@@ -238,21 +236,14 @@ export default function SurveyPage() {
         <p className="text-sm text-[var(--ink-500)]">
           {allAnswered ? "All questions answered — ready to submit." : `${survey.data.length - answeredCount} question(s) remaining`}
         </p>
-        {confirmOpen ? (
-          <div className="flex items-center gap-2">
-            <p className="text-xs font-medium text-[var(--ink-700)]">Submit now?</p>
-            <Button variant="secondary" size="sm" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-            <Button size="sm" loading={submitting} disabled={submitting} onClick={handleSubmit}>Yes, submit</Button>
-          </div>
-        ) : (
-          <Button
-            onClick={() => (allAnswered ? setConfirmOpen(true) : handleSubmit())}
-            disabled={submitting}
-            size="lg"
-          >
-            Submit Survey
-          </Button>
-        )}
+        <Button
+          onClick={handleSubmit}
+          loading={submitting}
+          disabled={submitting}
+          size="lg"
+        >
+          Submit Survey
+        </Button>
       </div>
     </div>
   );
