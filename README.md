@@ -1,18 +1,19 @@
-﻿# AdapTeach Frontend (Next.js)
+# AdapTeach Frontend
 
-Production-oriented mockup with API-ready integration for student and admin workflows.
+Next.js frontend for the AdapTeach adaptive tutor. Covers both the student learning flow and the admin dashboard.
 
 ## Stack
+
 - Next.js 16 (App Router, TypeScript)
 - Tailwind CSS
 - React Query (`@tanstack/react-query`)
 - Radix UI primitives
-- DnD Kit (Parsons)
-- Monaco Editor (tracing/mutation)
-- Recharts (analytics)
-- Axios (`mock`/`live` adapter switch)
+- DnD Kit — Parsons problem drag-and-drop
+- Monaco Editor — tracing and mutation exercises
+- Recharts — analytics views
+- Axios with a `mock`/`live` adapter switch
 
-## Quick Start
+## Getting Started
 
 ```bash
 cd frontend
@@ -21,55 +22,48 @@ cp .env.example .env.local
 npm run dev
 ```
 
-## API Modes
+Set `NEXT_PUBLIC_API_MODE=live` and `NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api` in `.env.local` to connect to the backend. The default is `mock`, which runs entirely off static fixtures — useful when the backend isn't running.
 
-- `NEXT_PUBLIC_API_MODE=mock` (default)
-- `NEXT_PUBLIC_API_MODE=live`
-- `NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api`
+Adapter selection lives in `src/lib/api/client.ts`.
 
-Adapter selection is in `src/lib/api/client.ts`.
+## Routes
 
-## Key Routes
-
-### Public
-- `/`
+**Public**
+- `/` — landing / redirect
 - `/login`
-- `/onboarding`
+- `/onboarding` — invite-based account activation
 
-### Student
+**Student**
 - `/student/dashboard`
-- `/student/session`
-- `/student/artifact/[artifactId]`
-- `/student/pretest`
-- `/student/posttest`
+- `/student/session` — current learning session
+- `/student/artifact/[artifactId]` — individual exercise
+- `/student/pretest` / `/student/posttest`
 - `/student/survey`
 - `/student/history`
 - `/student/profile`
 
-### Admin
-- `/admin`
-- `/admin/experiments`
-- `/admin/students`
-- `/admin/content`
-- `/admin/content/artifacts/[id]`
+**Admin**
+- `/admin` — overview
+- `/admin/experiments` — pipeline config management
+- `/admin/students` — cohort view + protocol controls
+- `/admin/content` / `/admin/content/artifacts/[id]`
 - `/admin/analytics`
-- `/admin/runs`
-- `/admin/logs`
+- `/admin/runs` — pipeline run logs
+- `/admin/logs` — telemetry
 - `/admin/settings`
 
-## Architecture Notes
+## Codebase Layout
 
-- Domain models: `src/types/models.ts`
-- API contracts/adapters: `src/lib/api/*`
-- Mock data: `src/lib/mocks/*`
-- Query hooks: `src/lib/hooks/queries.ts`
-- Telemetry hook: `src/lib/telemetry/useTelemetry.ts`
-- Student/admin shells: `src/components/layout/*`
-- Artifact components: `src/components/artifacts/*`
+| Path | What's there |
+|---|---|
+| `src/types/models.ts` | Shared domain types |
+| `src/lib/api/` | API client, contracts, mock/live adapters |
+| `src/lib/mocks/` | Static mock data |
+| `src/lib/hooks/queries.ts` | React Query hooks |
+| `src/lib/telemetry/useTelemetry.ts` | Attempt timing + hint tracking |
+| `src/components/layout/` | Student and admin shell layouts |
+| `src/components/artifacts/` | Exercise renderers (Parsons, tracing, etc.) |
 
-## Research Alignment
+## Research Notes
 
-This UI is structured around:
-- adaptive vs static-linear parity,
-- artifact-driven intervention (Parsons, tracing, mutation, slicing, quiz),
-- instrumentation-ready flows for attempts, hints, duration, and progression.
+The UI supports five artifact types (Parsons, code tracing, mutation, slicing, quiz) and instruments each for attempt count, hint usage, time-on-task, and step-level progression. The adaptive group gets artifacts selected by BKT mastery estimates; the control group follows a fixed linear sequence. Both flows share the same components — the difference is only in which artifact gets assigned.
