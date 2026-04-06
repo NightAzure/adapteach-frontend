@@ -96,6 +96,7 @@ export interface ApiAdapter {
     userId?: string;
   }): Promise<ApiResult<string>>;
   exportResearchSummary(): Promise<ApiResult<string>>;
+  exportObjective3(): Promise<ApiResult<Blob>>;
   exportAdminReportBundle(query: {
     assessmentType?: AssessmentType | "all";
     group?: "adaptive" | "static" | "all";
