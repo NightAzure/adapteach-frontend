@@ -216,6 +216,15 @@ export const httpAdapter: ApiAdapter = {
     return { data: res.data as string, source: "live" as const };
   },
 
+  async exportObjective3() {
+    // timeout: 0 disables the 20s axios limit — this endpoint builds a multi-file ZIP
+    const res = await api.get("/admin/research/export-objective3", {
+      responseType: "blob",
+      timeout: 0,
+    });
+    return { data: res.data as Blob, source: "live" as const };
+  },
+
   async exportAdminReportBundle(query) {
     const res = await api.get("/admin/reports/export-bundle", {
       params: query,

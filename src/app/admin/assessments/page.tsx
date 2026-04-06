@@ -60,6 +60,7 @@ export default function AdminAssessmentsPage() {
   const [isExportingCsv, setIsExportingCsv] = useState(false);
   const [isExportingBundle, setIsExportingBundle] = useState(false);
   const [isExportingResearch, setIsExportingResearch] = useState(false);
+  const [isExportingObj3, setIsExportingObj3] = useState(false);
   const [jsonImportPreview, setJsonImportPreview] = useState<{
     questions: AssessmentQuestion[];
     titleHint?: string;
@@ -263,6 +264,28 @@ export default function AdminAssessmentsPage() {
       toast.error("Research export failed", { description: String(error) });
     } finally {
       setIsExportingResearch(false);
+    }
+  };
+
+  const exportObjective3 = async () => {
+    try {
+      setIsExportingObj3(true);
+      const res = await apiClient.exportObjective3();
+      const url = URL.createObjectURL(res.data);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `adapteach_obj3_${new Date().toISOString().slice(0, 10)}.zip`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Objective 3 export ready", {
+        description: "ZIP downloaded: summary, item responses, and interaction log.",
+      });
+    } catch (error) {
+      toast.error("Objective 3 export failed", { description: String(error) });
+    } finally {
+      setIsExportingObj3(false);
     }
   };
 
@@ -908,6 +931,9 @@ export default function AdminAssessmentsPage() {
             </Button>
             <Button type="button" variant="secondary" onClick={exportResearchSummary} disabled={isExportingResearch}>
               <Download className="size-4" /> {isExportingResearch ? "Exporting..." : "Export Research Summary"}
+            </Button>
+            <Button type="button" variant="secondary" onClick={exportObjective3} disabled={isExportingObj3}>
+              <Download className="size-4" /> {isExportingObj3 ? "Building ZIP..." : "Export Obj 3 Data"}
             </Button>
             <label className="text-sm font-medium">Group</label>
             <select
