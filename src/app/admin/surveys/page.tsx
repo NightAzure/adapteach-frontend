@@ -153,11 +153,6 @@ export default function AdminSurveysPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          {activeTab === "responses" && (
-            <Button variant="secondary" size="sm" loading={exporting} onClick={handleExport}>
-              <Download className="size-4" /> Export CSV
-            </Button>
-          )}
           {activeTab === "editor" && isDirty && (
             <Button size="sm" loading={saving} onClick={handleSave}>
               <Save className="size-4" /> Save Changes
